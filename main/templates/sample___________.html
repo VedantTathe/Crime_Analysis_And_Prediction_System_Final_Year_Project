@@ -1,0 +1,314 @@
+
+
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Crime Analysis</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{%static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}">
+  <link rel="stylesheet" href="{%static 'assets/vendors/css/vendor.bundle.base.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/style.css'%}">
+  <!-- End layout styles -->
+
+  <!-- MyStyle css -->
+  <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}">
+  <link rel="shortcut icon" href="{%static 'assets/images/favicon.ico' %}">
+  <style>
+      .container-fluid {
+          background-image: url("{% static 'assets/images/myimages/bg2.jpg' %}");
+          background-repeat: no-repeat;
+          background-size: cover;
+      }
+      .form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transform-style: preserve-3d;
+        transition: all 1s ease;
+    }
+    
+    .form .form_front {
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(to right, #ff0000, #1c3c5e);
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        width: 29rem;
+        /* Convert 30px to rem */
+        position: absolute;
+        backface-visibility: hidden;
+        padding: 4.0625rem 2.8125rem;
+        /* Convert 65px 45px to rem */
+        border-radius: 1.875rem;
+        /* Convert 15px to rem */
+        box-shadow: inset 0.3125rem 0.3125rem 1.25rem rgb(255, 254, 254), inset -0.15625rem -0.15625rem 0.625rem rgba(9, 9, 9, 0.6);
+    }
+    
+    .input {
+        width: 15.3125rem;
+        /* Convert 245px to rem */
+        min-height: 2.8125rem;
+        /* Convert 45px to rem */
+        color: #080808;
+        outline: none;
+        transition: 0.35s;
+        padding: 0 0.4375rem;
+        /* Convert 0px 7px to rem */
+        background-color: #ffffff;
+        border-radius: 0.9375rem;
+        /* Convert 6px to rem */
+        border: 0.0625rem solid #212121;
+        /* Convert 2px to rem */
+        /* box-shadow: 0.9375rem 0.9375rem 1.5625rem #0f0f0f, 0.0625rem 0.0625rem 1.5625rem #f2ff00; */
+    }
+    
+    .btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 13rem;
+        overflow: hidden;
+        height: 3rem;
+        background-size: 300% 300%;
+        backdrop-filter: blur(1rem);
+        border-radius: 5rem;
+        transition: 0.5s;
+        animation: gradient_301 5s ease infinite;
+        border: double 4px transparent;
+        background-image: linear-gradient(#212121, #212121), linear-gradient(137.48deg, #f7ac15 10%, #fbfbfb 45%, #8F51EA 67%, #00ff04 87%);
+        background-origin: border-box;
+        background-clip: content-box, border-box;
+    }
+    
+    #container-stars {
+        position: absolute;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        transition: 0.5s;
+        backdrop-filter: blur(1rem);
+        border-radius: 5rem;
+    }
+    
+    strong {
+        z-index: 2;
+        font-family: 'Avalors Personal Use';
+        font-size: 12px;
+        letter-spacing: 5px;
+        color: #FFFFFF;
+        text-shadow: 0 0 4px white;
+    }
+    
+    #glow {
+        position: absolute;
+        display: flex;
+        width: 12rem;
+    }
+    
+    .circle {
+        width: 100%;
+        height: 30px;
+        filter: blur(2rem);
+        animation: pulse_3011 4s infinite;
+        z-index: -1;
+    }
+    
+    .circle:nth-of-type(1) {
+        background: rgba(254, 83, 186, 0.636);
+    }
+    
+    .circle:nth-of-type(2) {
+        background: rgba(142, 81, 234, 0.704);
+    }
+    
+    
+    /* .btn:hover #container-stars {
+        z-index: 1;
+        background-color: #212121;
+    } */
+    
+    .btn:hover {
+        transform: scale(1.1)
+    }
+    
+    .btn:active {
+        border: double 4px #FE53BB;
+        background-origin: border-box;
+        background-clip: content-box, border-box;
+        animation: none;
+    }
+    
+    .btn:active .circle {
+        background: #FE53BB;
+    }
+    
+    #stars {
+        position: relative;
+        background: transparent;
+        width: 200rem;
+        height: 200rem;
+    }
+    
+    #stars::after {
+        content: "";
+        position: absolute;
+        top: -10rem;
+        left: -100rem;
+        width: 100%;
+        height: 100%;
+        animation: animStarRotate 90s linear infinite;
+    }
+    
+    #stars::after {
+        background-image: radial-gradient(#ffffff 1px, transparent 1%);
+        background-size: 50px 50px;
+    }
+    
+    #stars::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -50%;
+        width: 170%;
+        height: 500%;
+        animation: animStar 60s linear infinite;
+    }
+    
+    #stars::before {
+        background-image: radial-gradient(#ffffff 1px, transparent 1%);
+        background-size: 50px 50px;
+        opacity: 0.5;
+    }
+    
+    @keyframes animStar {
+        from {
+            transform: translateY(0);
+        }
+        to {
+            transform: translateY(-135rem);
+        }
+    }
+    
+    @keyframes animStarRotate {
+        from {
+            transform: rotate(360deg);
+        }
+        to {
+            transform: rotate(0);
+        }
+    }
+    
+    @keyframes gradient_301 {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+    
+    @keyframes pulse_3011 {
+        0% {
+            transform: scale(0.75);
+            box-shadow: 0 0 0 0 rgba(186, 91, 91, 0.7);
+        }
+        70% {
+            transform: scale(1);
+            box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+        }
+        100% {
+            transform: scale(0.75);
+            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+        }
+    }
+  </style>
+
+
+</head>
+  <div>
+      {%if msg%}
+      <div class="text-center alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{msg}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %} {%if err%}
+      <div class="text-center alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{err}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+  </div>
+  <div class="container-scroller">
+      <div class="container-fluid page-body-wrapper full-page-wrapper d-flex align-items-center auth">
+
+          <!-- <div class="content-wrapper"> -->
+          <div class="login flex-grow ">
+
+              <div class="row">
+
+                  <div class="col-lg-4 mx-auto">
+                      <!-- <div class="auth-form-light text-left"> -->
+                      <form class="form w-75 mx-auto" action="/login.html/" method="post">{% csrf_token %}
+
+                          <div class="form_front">
+                              <div class="form_details">
+                                  <img src="{%static 'assets/images/myimages/White_logo_no_background.svg' %}" width="150rem" class="img-fluid mx-auto d-block m-3">
+                                  <h4 class="text-avatar fw-bold fs-4" style="background: linear-gradient(90deg, #f3efef, #417ebf); -webkit-background-clip: text; color: transparent;">Hello! Let's Get Started</h4>
+                              </div>
+                              <input type="text" name="username" class="input w-100" required="" placeholder="Username">
+                              <input type="password" name="pass" class="input w-100" required="" placeholder="Password">
+                              <button class="btn" type="submit    ">
+                                      <strong>LOGIN</strong>
+                                      <div id="container-stars">
+                                        <div id="stars"></div>
+                                      </div>
+                                    
+                                      <div id="glow">
+                                        <div class="circle"></div>
+                                        <div class="circle"></div>
+                                      </div>
+                                    </button>
+                              <span class="switch text-white">Don't have an account? 
+                                    <label for="signup_toggle" class="signup_tog">
+                                        Ask admin for registration
+                                    </label>
+                                </span>
+                          </div>
+                      </form>
+
+                  </div>
+              </div>
+          </div>
+
+      </div>
+  </div>
+  <!-- content-wrapper ends -->
+  
+  <!-- page-body-wrapper ends -->
+  
+  <!-- container-scroller -->
+  <!-- plugins:js -->
+  <script src="{%static 'assets/vendors/js/vendor.bundle.base.js' %}"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="{%static 'assets/js/off-canvas.js' %}"></script>
+  <script src="{%static 'assets/js/hoverable-collapse.js' %}"></script>
+  <script src="{%static 'assets/js/misc.js' %}"></script>
+  <!-- endinject -->
+
+
+</body></html>

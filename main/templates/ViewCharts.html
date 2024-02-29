@@ -1,0 +1,474 @@
+{% comment %} 
+
+{%load static%} {%block content%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>CrimeAnalysis</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css'%}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css'%}" />
+  <!-- endinject -->
+  <!-- Layout styles -->
+  <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
+  <!-- End layout styles -->
+  <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico'%}" />
+    <!-- MyStyle css -->
+    <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}" />
+  <style>
+    .chart-frame-fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1000;
+      background-color: white;
+      box-shadow: 0 2px 10px 0 rgba(70, 76, 79, 0.2);
+  }
+  </style>
+</head>
+
+<body>
+  <div class="container-scroller">
+      {% include 'components/navbar.html' %}
+
+
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper" style="height: 100vh">
+      <!-- partial:partials/_sidebar.html -->
+      {% include 'components/sidebar.html' %}
+
+      <!-- partial -->
+      <div class="main-panel main-div ">
+        {%if msg%}
+        <div class="alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{msg}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {%if err%}
+        <div class="alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{err}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        
+        <div class="content-wrapper ">
+            
+            <div class="col-12 m-auto ">
+              <div class="card">
+                <div class="position-absolute  " style="top:10px; right:20px;"><form action="/searchchart.html/">
+                  <input class="shadow btn btn-block btn-gradient-primary" type="submit" value="Find Chart"></input></form>
+                </div>
+                <div class="card-body d-flex justify-content-between flex-wrap p-3">
+                  
+                  <div class="chart-frame m-auto mb-2 pt-4">
+                  <button class="maximize-button1">[]</button>
+                  <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653a8295-cc82-445d-85ed-9369f02549f1&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  <div class="chart-frame m-auto mb-2 pt-4">
+                  <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653a7fac-e89e-4197-8653-87676cc1db48&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  <div class="chart-frame m-auto mb-2">
+                  <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bda20-49fd-4d0c-8acd-d0503a641279&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  <div class="chart-frame m-auto mb-2">
+                  <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653a85e7-ef00-4529-8c56-d1af183e468b&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  <div class="chart-frame m-auto mb-2">
+                  <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653a7dca-cc82-4e83-8ad4-9369f0202c1f&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  <div class="chart-frame m-auto mb-2">
+                  <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bd8da-eb82-4a7d-8465-ee7d62b7abcd&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  <div class="chart-frame m-auto mb-2">
+                  <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bda90-7139-43fd-86b6-37a95908d3cb&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  <div class="chart-frame m-auto mb-2">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bdbd8-7139-4652-81e8-37a95909c9e7&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  <div class="chart-frame m-auto mb-2">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bdd06-a2e1-4f99-84df-2960108420b1&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  <div class="chart-frame m-auto mb-2">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bdde8-4509-41bc-8721-e86924611cd9&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                </div>
+              </div>
+        </div>
+      </div>
+        
+      </form>
+        <footer class="footer">
+          <div class="container-fluid d-flex justify-content-between">
+            <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © </span>
+            <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
+              Free
+            </span>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- partial -->
+  </div>
+
+  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js'%}"></script>
+
+  <!-- inject:js -->
+  <script src="{% static 'assets/js/off-canvas.js'%}"></script>
+  <script src="{% static 'assets/js/hoverable-collapse.js'%}"></script>
+  <script src="{% static 'assets/js/misc.js'%}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page -->
+  <script src="{% static 'assets/js/file-upload.js'%}"></script>
+  <script src="{% static 'assets/js/myjs.js'%}"></script>
+  <!-- End custom js for this page -->
+</div>
+<script>
+  // Wait for the DOM to be fully loaded
+  document.addEventListener("DOMContentLoaded", function () {
+      // Get all elements with the class 'maximize-button1'
+      var maximizeButtons = document.querySelectorAll('.maximize-button1');
+
+      // Add a click event listener to each maximize button
+      maximizeButtons.forEach(function (button) {
+          button.addEventListener("click", function () {
+              // Find the parent chart-frame and toggle fullscreen class
+              var chartFrame = button.closest('.chart-frame');
+              toggleFullscreen(chartFrame);
+          });
+      });
+
+      // Function to toggle fullscreen class
+      function toggleFullscreen(element) {
+          element.classList.toggle('chart-frame-fullscreen');
+      }
+  });
+</script>
+
+</body>
+
+</html>
+{%endblock%} {% endcomment %}
+
+
+
+{%load static%} {%block content%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>CrimeAnalysis</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css'%}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css'%}" />
+  <!-- endinject -->
+  <!-- Layout styles -->
+  <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
+  <!-- End layout styles -->
+  <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico'%}" />
+    <!-- MyStyle css -->
+  <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}" />
+  <link rel="stylesheet" href="{% static 'assets/css/loader.css'%}" />
+
+  <style>
+   
+    content-wrapper button {
+ padding: 15px 25px;
+ border: unset;
+ border-radius: 15px;
+ color: #212121;
+ z-index: 1;
+ background: #e8e8e8;
+ position: relative;
+ font-weight: 1000;
+ font-size: 17px;
+ -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+ box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+ transition: all 250ms;
+ overflow: hidden;
+}
+
+content-wrapper button::before {
+ content: "";
+ position: absolute;
+ top: 0;
+ left: 0;
+ height: 100%;
+ width: 0;
+ border-radius: 15px;
+ background-color: #212121;
+ z-index: -1;
+ -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+ box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+ transition: all 250ms
+}
+
+content-wrapper button:hover {
+ color: #e8e8e8;
+}
+
+content-wrapper button:hover::before {
+ width: 100%;
+}   
+
+.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background-color: white; 
+        }
+
+        .chart-frame {
+            position: relative;
+        }
+
+        .maximize-button1 {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            cursor: pointer;
+        }
+
+  </style>  
+  </head>
+
+<body>
+
+  <div class="container-scroller">
+      {% include 'components/navbar.html' %}
+
+
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper" style="height: 100vh">
+      <!-- partial:partials/_sidebar.html -->
+      {% include 'components/sidebar.html' %}
+      <!-- partial -->
+      <div class="main-panel main-div ">
+        {%if msg%}
+        <div class="alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{msg}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {%if err%}
+        <div class="alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{err}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        
+        <div class="content-wrapper ">
+          
+  <div class="loader-container">
+    <div class="loader"></div>
+  </div>
+          <button class="maximize-button1" id='max-btn' style="z-index:99999; display:none;" ><i class="fa-solid fa-expand"></i></button>
+            <div class="col-12 m-auto ">
+                
+              <div class="card">
+                      
+                <div class="position-absolute  " style="top:10px; right:20px;"><form action="/searchchart.html/">
+                  <input class="shadow btn btn-block btn-gradient-primary" style="    position: absolute;
+                  top: 0;
+                  right: 0;
+                  z-index: 9;" id="find-chart-btn" type="submit" value="Find Chart"></input></form>
+                </div>
+                <div id="chart-page1" style="display:flex;" class=" card-body justify-content-between flex-wrap p-3">
+                  <div class="chart-frame m-auto mb-2 pt-4">
+                    <button class="maximize-button1" onclick="toggleFullscreen('chart1')"><i class="fa-solid fa-expand"></i></button>
+                    <iframe id="chart1" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653a8295-cc82-445d-85ed-9369f02549f1&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <div class="chart-frame m-auto mb-2 pt-4">
+                    <button class="maximize-button1" onclick="toggleFullscreen('chart2')"><i class="fa-solid fa-expand"></i></button>
+                    <iframe id="chart2" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653a7fac-e89e-4197-8653-87676cc1db48&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <div class="chart-frame m-auto mb-2 pt-4">
+                      <button class="maximize-button1" onclick="toggleFullscreen('chart3')"><i class="fa-solid fa-expand"></i></button>
+                    <iframe id="chart3" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bda20-49fd-4d0c-8acd-d0503a641279&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <div class="chart-frame m-auto mb-2 pt-4">
+                      <button class="maximize-button1" onclick="toggleFullscreen('chart4')"><i class="fa-solid fa-expand"></i></button>
+                    <iframe id="chart4" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653a85e7-ef00-4529-8c56-d1af183e468b&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <div class="chart-frame m-auto mb-2 pt-4">
+                      <button class="maximize-button1" onclick="toggleFullscreen('chart5')"><i class="fa-solid fa-expand"></i></button>
+                    <iframe id="chart5" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653a7dca-cc82-4e83-8ad4-9369f0202c1f&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <div class="chart-frame m-auto mb-2 pt-4">
+                      <button class="maximize-button1" onclick="toggleFullscreen('chart6')"><i class="fa-solid fa-expand"></i></button>
+                    <iframe id="chart6" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bd8da-eb82-4a7d-8465-ee7d62b7abcd&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <div class="chart-frame m-auto mb-2 pt-4">
+                      <button class="maximize-button1" onclick="toggleFullscreen('chart7')"><i class="fa-solid fa-expand"></i></button>
+                    <iframe id="chart7" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bda90-7139-43fd-86b6-37a95908d3cb&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <div class="chart-frame m-auto mb-2 pt-4">
+                      <button class="maximize-button1" onclick="toggleFullscreen('chart8')"><i class="fa-solid fa-expand"></i></button>
+                      <iframe id="chart8" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bdbd8-7139-4652-81e8-37a95909c9e7&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <div class="chart-frame m-auto mb-2 pt-4">
+                      <button class="maximize-button1" onclick="toggleFullscreen('chart9')"><i class="fa-solid fa-expand"></i></button>
+                      <iframe id="chart9" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bdd06-a2e1-4f99-84df-2960108420b1&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <div class="chart-frame m-auto mb-2 pt-4">
+                      <button class="maximize-button1" onclick="toggleFullscreen('chart10')"><i class="fa-solid fa-expand"></i></i> </button>
+                      <iframe id="chart10" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bdde8-4509-41bc-8721-e86924611cd9&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <button id="nextbtn" class="shadow btn btn-block btn-gradient-primary">Next Page</button>
+                    
+                </div>
+
+                <div id="chart-page2" style="display:none;" class=" card-body justify-content-between flex-wrap p-3">
+                  <div class="chart-frame m-auto mb-2 pt-4">
+                      <button class="maximize-button1" onclick="toggleFullscreen('chart11')"><i class="fa-solid fa-expand"></i></button>
+                    <iframe id="chart1" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" resize:both;overflow:auto; padding: 20px" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8c60-bbf1-4c5f-84c2-590df2b8c463&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                    <div class="chart-frame m-auto mb-2 pt-4">
+                      <button class="maximize-button1" onclick="toggleFullscreen('chart12')"><i class="fa-solid fa-expand"></i></button>
+                      <iframe id="chart2" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" resize:both;overflow:auto; padding: 20px" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8c60-bbf1-443d-827f-590df2b8c465&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <div class="chart-frame m-auto mb-2 pt-4">
+                      <button class="maximize-button1" onclick="toggleFullscreen('chart13')"><i class="fa-solid fa-expand"></i></button>
+                      <iframe id="chart3" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" resize:both;overflow:auto; padding: 20px" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8c60-bbf1-4e26-87cc-590df2b8c467&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <div class="chart-frame m-auto mb-2 pt-4">
+                      <button class="maximize-button1" onclick="toggleFullscreen('chart14')"><i class="fa-solid fa-expand"></i></button>
+                      <iframe id="chart4" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" resize:both;overflow:auto; padding: 20px" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8c60-bbf1-4a08-8dec-590df2b8c469&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <div class="chart-frame m-auto mb-2 pt-4">
+                      <button class="maximize-button1" onclick="toggleFullscreen('chart15')"><i class="fa-solid fa-expand"></i></button>
+                      <iframe id="chart5" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" resize:both;overflow:auto; padding: 20px" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8c60-bbf1-4b34-88b2-590df2b8c46b&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <div class="chart-frame m-auto mb-2 pt-4">
+                      <button class="maximize-button1" onclick="toggleFullscreen('chart16')"><i class="fa-solid fa-expand"></i></button>
+                      <iframe id="chart6" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" resize:both;overflow:auto; padding: 20px" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8c60-bbf1-404c-8c55-590df2b8c46d&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <div class="chart-frame m-auto mb-2 pt-4">
+                      <button class="maximize-button1" onclick="toggleFullscreen('chart17')"><i class="fa-solid fa-expand"></i></button>
+                      <iframe id="chart7" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" resize:both;overflow:auto; padding: 20px" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8c60-bbf1-4a99-88f5-590df2b8c46f&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <div class="chart-frame m-auto mb-2 pt-4">
+                      <button class="maximize-button1" onclick="toggleFullscreen('chart18')"><i class="fa-solid fa-expand"></i></button>
+                      <iframe id="chart8" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" resize:both;overflow:auto; padding: 20px" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8c60-bbf1-4d5d-856c-590df2b8c471&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                    </div>
+                    <button id="nextbtn" class="shadow btn btn-block btn-gradient-primary">Previous Page</button>
+                    
+              </div>
+              </div>
+        </div>
+      </div>
+        
+      </form>
+        <footer class="footer">
+          <div class="container-fluid d-flex justify-content-between">
+            <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © </span>
+            <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
+              Free
+            </span>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- partial -->
+  </div>
+
+  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js'%}"></script>
+
+  <!-- inject:js -->
+  <script src="{% static 'assets/js/off-canvas.js'%}"></script>
+  <script src="{% static 'assets/js/hoverable-collapse.js'%}"></script>
+  <script src="{% static 'assets/js/misc.js'%}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page -->
+  <script src="{% static 'assets/js/file-upload.js'%}"></script>
+  <script src="{% static 'assets/js/myjs.js'%}"></script>
+  <script src="{% static 'assets/js/loader.js'%}"></script>
+  <!-- End custom js for this page -->
+</div>
+<script src="https://kit.fontawesome.com/c8a0e865fe.js" crossorigin="anonymous"></script>
+<script>
+
+  var page1 = document.getElementById('chart-page1');
+var page2 = document.getElementById('chart-page2');
+
+function nextpage() {
+    if (page1.style.display === 'flex') {
+        page1.style.display = 'none';
+        page2.style.display = 'flex';
+    } else {
+        page1.style.display = 'flex';
+        page2.style.display = 'none';
+    }
+
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+document.getElementById('nextbtn').addEventListener('click', function() {
+    nextpage();
+});
+
+
+
+   function toggleFullscreen(chartId,event) {
+        var chartFrame = document.getElementById(chartId);
+        count = 0
+        if (!chartFrame.classList.contains('fullscreen')) {
+            // Entering fullscreen
+            chartFrame.classList.add('fullscreen');
+            document.documentElement.style.overflow = 'hidden'; // Disable scrolling when in fullscreen
+            
+        } else {
+            // Exiting fullscreen
+            chartFrame.classList.remove('fullscreen');
+            document.documentElement.style.overflow = ''; // Enable scrolling
+            
+          }
+          
+          var button = document.getElementById('max-btn');
+
+          // Check if the button is currently visible
+          if (button.style.display === 'block') {
+              // If it's visible, hide it
+              button.style.display = 'none';
+          } else {
+              // If it's hidden, show it
+              button.style.display = 'block';
+          }
+
+          document.getElementById('max-btn').onclick = function() {
+            toggleFullscreen(chartId); // Assign the function reference to onclick
+            };
+
+  }
+
+</script>
+</body>
+
+</html>
+{%endblock%}
+
+
+<!-- ViewChart.html -->

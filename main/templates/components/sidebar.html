@@ -1,0 +1,111 @@
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="ma" >
+      <a class="nav-link" href="/index.html/">
+        <span class="menu-title active-link" style="font-weight: 500;" >Dashboard</span>
+        <i class="mdi mdi-home menu-icon" style="text-weight:bold"></i>
+      </a>
+    </div>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-bs-toggle="collapse" href="#crime-details" aria-expanded="false" aria-controls="crime-details">
+        <span class="menu-title">Crime Details</span>
+        <i class="menu-arrow"></i>
+        <i class="mdi mdi-crosshairs-gps menu-icon"></i>
+      </a>
+      <div class="collapse" id="crime-details">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item">
+            <a class="nav-link" href="/RegisterCrime.html">Register Crime</a>
+          </li>
+          {% comment %} <li class="nav-item">
+            <a class="nav-link" href="/UpdateCrime.html">Update Crime</a>
+          </li> {% endcomment %}
+          <li class="nav-item">
+            <a class="nav-link" href="/SearchCrime.html">Search Record</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/viewcriminal.html">View Criminals</a>
+          </li>
+          {% comment %} <li class="nav-item">
+            <a class="nav-link" href="/viewcriminal.html">List Record</a>
+          </li> {% endcomment %}
+        </ul>
+      </div>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-link" data-bs-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
+        <span class="menu-title">Charts</span>
+        <i class="menu-arrow"></i>
+        <i class="mdi mdi-chart-bar menu-icon"></i>
+      </a>
+      <div class="collapse" id="charts">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item">
+            <a class="nav-link" href="/searchchart.html">Search Chart</a>
+          </li>
+          {% comment %} <li class="nav-item">
+            <a class="nav-link" href="/chartjs.html">Find Chart</a>
+          </li> {% endcomment %}
+          <li class="nav-item">
+            <a class="nav-link" href="/ViewCharts.html">View Chart</a>
+          </li>
+        </ul>
+      </div>
+    </li>  
+    <!-- <li class="nav-item">
+      <a class="nav-link" href="/chartjs.html/">
+        <span class="menu-title">Charts</span>
+        <i class="mdi mdi-chart-bar menu-icon"></i>
+      </a>
+    </li> -->
+    
+    <li class="nav-item">
+      <a class="nav-link" data-bs-toggle="collapse" href="#general-pages" aria-expanded="false"
+        aria-controls="general-pages">
+        <span class="menu-title">User Details</span>
+        <i class="menu-arrow"></i>
+        <i class="mdi mdi-medical-bag menu-icon"></i>
+      </a>
+      <div class="collapse" id="general-pages">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item">
+            <a class="nav-link" href="/register.html/">
+              Register New User
+            </a>
+          </li>
+          {% if request.session.utype == "admin" %}
+          <li class="nav-item" id="view-users-dropdown">
+            <a class="nav-link" href="/viewuser.html/">
+              View Users  
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item">
+      <div class="ma" >
+      <a class="nav-link" href="/futurehotspots.html/">
+        <span class="menu-title" style="font-weight: 500;" >Future Hotspots</span>
+        <i class="mdi mdi-crosshairs-gps menu-icon" style="text-weight:bold"></i>
+      </a>
+    </div>
+    </li>
+    <li class="nav-item sidebar-actions">
+      <span class="nav-link">
+        
+        <button class="btn btn-block btn-lg btn-gradient-primary mt-4"  onclick="window.location.href ='/RegisterCrime.html/';" style="border-radius:0px">
+          + Add a Crime
+        </button>
+        <div class="mt-4">
+          <div class="border-bottom">
+            <p class="text-secondary"></p>
+          </div>
+        </div>
+      </span>
+    </li>
+  </ul>
+</nav>

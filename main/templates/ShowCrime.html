@@ -1,0 +1,90 @@
+{%load static%} {%block content%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>CrimeAnalysis</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css'%}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css'%}" />
+  <!-- endinject -->
+  <!-- Layout styles -->
+  <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
+  <!-- End layout styles -->
+  <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico'%}" />
+    <!-- MyStyle css -->
+    <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}" />
+
+
+</head>
+
+<body class="bg-white ">
+  <div class="container-scroller bg-white ">
+      {% include 'components/navbar.html' %}
+
+
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper" style="height: 100vh">
+      <!-- partial:partials/_sidebar.html -->
+      {% include 'components/sidebar.html' %}
+      <!-- partial -->
+      <div class="main-panel main-div bg-white">
+        {%if msg%}
+        <div class="alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{msg}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {%if err%}
+        <div class="alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{err}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+            <div class="text-center">
+              Under development...!
+            </div>
+            
+          <!-- page-body-wrapper ends -->
+        </div>
+    
+          
+        
+        <footer class="footer">
+          <div class="container-fluid d-flex justify-content-between">
+            <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © </span>
+            <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
+              Free
+            </span>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- partial -->
+  </div>
+
+
+
+  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js'%}"></script>
+
+  <!-- inject:js -->
+  <script src="{% static 'assets/js/off-canvas.js'%}"></script>
+  <script src="{% static 'assets/js/hoverable-collapse.js'%}"></script>
+  <script src="{% static 'assets/js/misc.js'%}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page -->
+  <script src="{% static 'assets/js/file-upload.js'%}"></script>
+  <script src="{% static 'assets/js/myjs.js'%}"></script>
+  <!-- End custom js for this page -->
+</div>
+</body>
+
+</html>
+{%endblock%}

@@ -1,0 +1,131 @@
+{%load static%} {%block content%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>CrimeAnalysis</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css'%}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css'%}" />
+  <!-- endinject -->
+  <!-- Layout styles -->
+  <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
+  <!-- End layout styles -->
+  <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico'%}" />
+    <!-- MyStyle css -->
+    <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}" />
+
+
+</head>
+
+<body class="bg-white ">
+  <div class="container-scroller bg-white ">
+      {% include 'components/navbar.html' %}
+
+
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper" style="height: 100vh">
+      <!-- partial:partials/_sidebar.html -->
+      {% include 'components/sidebar.html' %}
+      <!-- partial -->
+      <div class="main-panel main-div bg-white">
+        {%if msg%}
+        <div class="text-center alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{msg}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {%if err%}
+        <div class="text-center alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{err}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+            <div class="content-wrapper d-flex align-items-center auth p-0" style="background-color:white !important;">
+              
+              <div class="row flex-grow bg-white">
+                <div class=" mx-auto bg-white">
+                  <div class="auth-form-light text-left py-1 bg-white ">
+                    
+                    <div class="brand-logo mt-4" style="text-align:center;">
+                      {% comment %} <img src="{%static 'assets/images/logo.svg' %}"> {% endcomment %}
+                      <h1>Select Crime to Update Record</h1>
+    
+                    </div>
+                    <!-- <h6 class="font-weight-light">Signing up is easy. It only takes a few steps</h6> -->
+                    
+                    <div class="col-lg-8 col-10 m-auto">
+                      <form action="/criminaldetail.html/" method="post">{% csrf_token %}
+                        <table class="" style="" id="view_users">
+                          <tr class="" style="border-bottom: 1px solid #36454F;">
+                            <th class="p-2 pe-4 col-2  ">First Name</th>
+                            <th class="p-2 pe-4 col-2  ">Last Name</th>
+                            <th class="p-2 pe-4 col-2  ">Crime</th>                           
+                          </tr>
+                          {% for criminal in criminals_data %}
+                          <tr class="" style="border-bottom: 1px solid #9b9b9b;">
+                              <td class="p-2 pe-4 col-2">{{ criminal.first_name }}</td>
+                              <td class="p-2 pe-4 col-2">{{ criminal.last_name }}</td>
+                              <td class="p-2 pe-4 col-2">
+                                {% for crime_type in criminal.crime_types %}
+                                    <a href="{% url 'main:showupdate' param1=criminal.first_name param2=criminal.last_name param3=crime_type %}">
+                                        {{ crime_type }}<br>
+                                    </a>
+                                {% endfor %}
+                            </td>
+                              
+                          </tr>
+                      {% endfor %}
+
+                        </table>
+                      </form> 
+                    </div>
+                        
+                  </div>
+                </div>
+            <!-- content-wrapper ends -->
+            </div>
+            
+          <!-- page-body-wrapper ends -->
+        </div>
+    
+          
+        
+        <footer class="footer">
+          <div class="container-fluid d-flex justify-content-between">
+            <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © </span>
+            <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
+              Free
+            </span>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- partial -->
+  </div>
+
+
+
+  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js'%}"></script>
+
+  <!-- inject:js -->
+  <script src="{% static 'assets/js/off-canvas.js'%}"></script>
+  <script src="{% static 'assets/js/hoverable-collapse.js'%}"></script>
+  <script src="{% static 'assets/js/misc.js'%}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page -->
+  <script src="{% static 'assets/js/file-upload.js'%}"></script>
+  <script src="{% static 'assets/js/myjs.js'%}"></script>
+  <!-- End custom js for this page -->
+</div>
+</body>
+
+</html>
+{%endblock%}

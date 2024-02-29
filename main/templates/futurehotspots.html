@@ -1,0 +1,454 @@
+{% comment %} {%load static%} {%block content%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>CrimeAnalysis</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css'%}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}" />
+
+  <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
+  <!-- End layout styles -->
+
+  <!-- MyStyle css -->
+  <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}" />
+  <style>
+    .container1 {
+      overflow: auto;
+      display: flex;
+      scroll-snap-type: x mandatory;
+
+    }
+
+    .card1 {
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(7px);
+      border-radius: 10px;
+      padding: 0.5;
+    }
+
+    .container1:hover {
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    }
+
+    .title1 {
+      display: inline-block;
+      /* text-overflow: ellipsis; */
+      /* text-align: center; */
+    }
+
+    .custom-margin {
+      font-weight: bolder;
+      color: #292828;
+      border: 2px solid #ec4a4a;
+      background-color: rgb(240, 193, 193);
+    }
+
+
+    .card-header {
+      background-color: #868686;
+      color: #fff;
+      border-radius: 15px 15px 0 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    {% include 'components/navbar.html' %}
+
+
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper" style="height: 100vh">
+      <!-- partial:partials/_sidebar.html -->
+      {% include 'components/sidebar.html' %}
+
+      <!-- partial -->
+      <div class="main-panel main-div">
+        {%if msg%}
+        <div class="alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+            {{msg}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {%if err%}
+        <div class="alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+            {{err}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+
+        <div class="content-wrapper p-3 ">
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-md-8">
+                {%if landmark%}
+
+                <h4>On {{date}} and time {{timeperiod}} the crime {{crimetype}} can be occured in following hotspot:
+                </h4>
+                <h3>Hotspot is at Logitude: {{longitude}}, Latitude: {{latitude}}, Landmark: {{landmark}}, Pincode:
+                  {{pincode}}</h3>
+
+                {%endif%}
+                <div class="card mt-3">
+                  <div class="card-header text-center">
+                    <h1>Future Hotspots Prediction</h1>
+                  </div>
+                  <div class="card-body">
+                    <form action="/predicthotspots_of_date/" method="post">{% csrf_token %}
+                      <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="date" id="date" name="mydate" class="form-control" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="crime">Type of Crime:</label>
+                        <select name="CrimeType" id="CrimeType" class="form-control Type-Of-Crime" required>
+                          <option value="">Select</option>
+                          <option value="pocket theft" {%if data.type=="POCKET THEFT" %}selected{%endif%}>POCKET THEFT
+                          </option>
+                          <option value="chain theft" {%if data.type=="CHAIN THEFT" %}selected{%endif%}>CHAIN THEFT
+                          </option>
+                          <option value="bicycle theft" {%if data.type=="BICYCLE THEFT" %}selected{%endif%}>BICYCLE
+                            THEFT</option>
+                          <option value="two-wheeler theft" {%if data.type=="TWO-WHEELER THEFT" %}selected{%endif%}>
+                            TWO-WHEELER THEFT</option>
+                          <option value="four-wheeler theft" {%if data.type=="FOUR-WHEELER THEFT" %}selected{%endif%}>
+                            FOUR-WHEELER THEFT</option>
+                          <option value="other vehicle theft" {%if data.type=="OTHER VEHICLE THEFT" %}selected{%endif%}>
+                            OTHER VEHICLE THEFT</option>
+                          <option value="vehicle parts theft" {%if data.type=="VEHICLE PARTS THEFT" %}selected{%endif%}>
+                            VEHICLE PARTS THEFT</option>
+                          <option value="other theft" {%if data.type=="OTHER THEFT" %}selected{%endif%}>OTHER THEFT
+                          </option>
+                          <option value="commercial robbery" {%if data.type=="COMMERCIAL ROBBERY" %}selected{%endif%}>
+                            COMMERCIAL ROBBERY</option>
+                          <option value="technical robbery" {%if data.type=="TECHNICAL ROBBERY" %}selected{%endif%}>
+                            TECHNICAL ROBBERY</option>
+                          <option value="priparing to robbery" {%if data.type=="PRIPARING TO ROBBERY"
+                            %}selected{%endif%}>PRIPARING TO ROBBERY</option>
+                          <option value="other robbery" {%if data.type=="OTHER ROBBERY" %}selected{%endif%}>OTHER
+                            ROBBERY</option>
+                          <option value="daytime burglary" {%if data.type=="DAYTIME BURGLARY" %}selected{%endif%}>
+                            DAYTIME BURGLARY</option>
+                          <option value="night burglary" {%if data.type=="NIGHT BURGLARY" %}selected{%endif%}>NIGHT
+                            BURGLARY</option>
+                          <option value="culpable homicide" {%if data.type=="CULPABLE HOMICIDE" %}selected{%endif%}>
+                            CULPABLE HOMICIDE</option>
+                          <option value="forcible theft" {%if data.type=="FORCIBLE THEFT" %}selected{%endif%}>FORCIBLE
+                            THEFT</option>
+                          <option value="rape" {%if data.type=="RAPE" %}selected{%endif%}>RAPE</option>
+                          <option value="murder" {%if data.type=="MURDER" %}selected{%endif%}>MURDER</option>
+                          <option value="attempt murder" {%if data.type=="ATTEMPT TO MURDER" %}selected{%endif%}>ATTEMPT
+                            TO MURDER</option>
+                          <option value="betrayal" {%if data.type=="BETRAYAL" %}selected{%endif%}>BETRAYAL</option>
+                          <option value="riot" {%if data.type=="RIOT" %}selected{%endif%}>RIOT</option>
+                          <option value="injury" {%if data.type=="INJURY" %}selected{%endif%}>INJURY</option>
+                          <option value="molestation" {%if data.type=="MOLESTATION" %}selected{%endif%}>MOLESTATION
+                          </option>
+                          <option value="gambling" {%if data.type=="GAMBLING" %}selected{%endif%}>GAMBLING</option>
+                          <option value="prohibition" {%if data.type=="PROHIBITION" %}selected{%endif%}>PROHIBITION
+                          </option>
+                          <option value="other" {%if data.type=="OTHER" %}selected{%endif%}>OTHER</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="time">Time Period:</label>
+                        <select name="Timeperiod" id="timeperiod" class="form-control Time-Period-Of-Crime" required>
+                          <option>Select</option>
+                          <option value="00:00 - 02:00" {%if "12 AM" in data.time_period and "2 AM" in
+                            data.time_period%}selected{%endif%}>00:00 - 02:00</option>
+                          <option value="00:20 - 04:00" {%if "4 AM" in data.time_period and "2 AM" in
+                            data.time_period%}selected{%endif%}>02:00 - 04:00</option>
+                          <option value="04:00 - 06:00" {%if "4 AM" in data.time_period and "6 AM" in
+                            data.time_period%}selected{%endif%}>04:00 - 06:00</option>
+                          <option value="06:00 - 08:00" {%if "6 AM" in data.time_period and "8 AM" in
+                            data.time_period%}selected{%endif%}>06:00 - 08:00</option>
+                          <option value="08:00 - 10:00" {%if "8 AM" in data.time_period and "10 AM" in
+                            data.time_period%}selected{%endif%}>08:00 - 10:00</option>
+                          <option value="10:00 - 12:00" {%if "10 AM" in data.time_period and "12 PM" in
+                            data.time_period%}selected{%endif%}>10:00 - 12:00</option>
+                          <option value="12:00 - 14:00" {%if "12 PM" in data.time_period and "2 PM" in
+                            data.time_period%}selected{%endif%}>12:00 - 14:00</option>
+                          <option value="14:00 - 16:00" {%if "2 PM" in data.time_period and "4 PM" in
+                            data.time_period%}selected{%endif%}>14:00 - 16:00</option>
+                          <option value="16:00 - 18:00" {%if "4 PM" in data.time_period and "6 PM" in
+                            data.time_period%}selected{%endif%}>16:00 - 18:00</option>
+                          <option value="18:00 - 20:00" {%if "6 PM" in data.time_period and "8 PM" in
+                            data.time_period%}selected{%endif%}>18:00 - 20:00</option>
+                          <option value="20:00 - 22:00" {%if "8 PM" in data.time_period and "10 PM" in
+                            data.time_period%}selected{%endif%}>20:00 - 22:00</option>
+                          <option value="22:00 - 00:00" {%if "10 PM" in data.time_period and "12 AM" in
+                            data.time_period%}selected{%endif%}>22:00 - 00:00</option>
+                        </select>
+                      </div>
+                      <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:partials/_footer.html -->
+        <footer class="footer">
+          <div class="container-fluid d-flex justify-content-between">
+            <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright ©
+            </span>
+            <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
+              Free
+          </div>
+        </footer>
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+  <!-- plugins:js -->
+  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js'%}"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="{% static 'assets/vendors/chart.js/Chart.min.js'%}"></script>
+  <script src="{% static 'assets/js/jquery.cookie.js'%}" type="text/javascript"></script>
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="{% static 'assets/js/off-canvas.js'%}"></script>
+  <script src="{% static 'assets/js/hoverable-collapse.js'%}"></script>
+  <script src="{% static 'assets/js/misc.js'%}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page -->
+  <script src="{% static 'assets/js/dashboard.js'%}"></script>
+  <script src="{% static 'assets/js/todolist.js'%}"></script>
+
+  <!--JS for basic tasks-->
+  <script src="{% static 'assets/js/myjs.js'%}"></script>
+
+  <!-- End custom js for this page -->
+
+  </div>
+
+</body>
+
+</html>
+
+{%endblock%} {% endcomment %}
+
+
+{% load static %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>CrimeAnalysis</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="{% static 'assets/vendors/bootstrap/css/bootstrap.min.css' %}" />
+  <!-- Material Design Icons -->
+  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}" />
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
+  <!-- MyStyle css -->
+  <link rel="stylesheet" href="{% static 'assets/css/mystyle.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/loader.css' %}" />
+</head>
+
+<body>
+  <div class="container-scroller">
+    <!-- Navbar -->
+    {% include 'components/navbar.html' %}
+    <!-- End Navbar -->
+
+    <div class="container-fluid page-body-wrapper" style="height: 100vh">
+      <!-- Sidebar -->
+      {% include 'components/sidebar.html' %}
+      <!-- End Sidebar -->
+
+      <div class="main-panel main-div">
+        <!-- Alerts -->
+        {% if msg %}
+        <div class="alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>{{msg}}</h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %} {% if err %}
+        <div class="alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>{{err}}</h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        <!-- End Alerts -->
+
+        <div class="content-wrapper p-3 ">
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-md-8">
+                {% if landmark %}
+                <div class="result-card card mt-3">
+                  <div class="card-header text-center bg-secondary text-white">
+                    <h1>Hotspot Prediction Result</h1>
+                  </div>
+                  <div class="card-body">
+                    <div class="result-details">
+                      <table class="table">
+                        <tbody>
+                          <tr>
+                            <th scope="row">Date and Time</th>
+                            <td>{{ date }} at {{ timeperiod }}</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">Crime Type</th>
+                            <td>{{ crimetype }}</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">Hotspot Location</th>
+                            <td>
+                              <ul class="list-unstyled">
+                                <li>Longitude: {{ longitude }}</li>
+                                <li>Latitude: {{ latitude }}</li>
+                                <li>Landmark: {{ landmark }}</li>
+                                <li>Pincode: {{ pincode }}</li>
+                              </ul>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                  </div>
+                </div>
+                {% endif %}
+                <div class="input-card card mt-3">
+                  <div class="card-header text-center bg-secondary">
+                    <h1 class="text-white">Future Hotspots Prediction</h1>
+                  </div>
+                  <div class="card-body">
+                    <form action="/predicthotspots_of_date/" method="post" class="needs-validation" novalidate>
+                      {% csrf_token %}
+                      <div class="mb-3">
+                        <label for="date">Date:</label>
+                        <input type="date" id="date" name="mydate" class="form-control" required />
+                        <div class="invalid-feedback">Please provide a valid date.</div>
+                      </div>
+                      <div class="mb-3">
+                        <label for="CrimeType">Type of Crime:</label>
+                        <select name="CrimeType" id="CrimeType" class="form-control Type-Of-Crime" required>
+                          <option value="">Select</option>
+                          <option value="pocket theft">POCKET THEFT</option>
+                          <option value="chain theft">CHAIN THEFT</option>
+                          <option value="bicycle theft">BICYCLE THEFT</option>
+                          <option value="two-wheeler theft">TWO-WHEELER THEFT</option>
+                          <option value="four-wheeler theft">FOUR-WHEELER THEFT</option>
+                          <option value="other vehicle theft">OTHER VEHICLE THEFT</option>
+                          <option value="vehicle parts theft">VEHICLE PARTS THEFT</option>
+                          <option value="other theft">OTHER THEFT</option>
+                          <option value="commercial robbery">COMMERCIAL ROBBERY</option>
+                          <option value="technical robbery">TECHNICAL ROBBERY</option>
+                          <option value="priparing to robbery">PRIPARING TO ROBBERY</option>
+                          <option value="other robbery">OTHER ROBBERY</option>
+                          <option value="daytime burglary">DAYTIME BURGLARY</option>
+                          <option value="night burglary">NIGHT BURGLARY</option>
+                          <option value="culpable homicide">CULPABLE HOMICIDE</option>
+                          <option value="forcible theft">FORCIBLE THEFT</option>
+                          <option value="rape">RAPE</option>
+                          <option value="murder">MURDER</option>
+                          <option value="attempt murder">ATTEMPT TO MURDER</option>
+                          <option value="betrayal">BETRAYAL</option>
+                          <option value="riot">RIOT</option>
+                          <option value="injury">INJURY</option>
+                          <option value="molestation">MOLESTATION</option>
+                          <option value="gambling">GAMBLING</option>
+                          <option value="prohibition">PROHIBITION</option>
+                          <option value="other">OTHER</option>
+                      </select>
+                      
+                      </div>
+                      <div class="mb-3">
+                        <label for="timeperiod">Time Period:</label>
+                        <select name="Timeperiod" id="timeperiod" class="form-control Time-Period-Of-Crime" required>
+                          <option>Select</option>
+                          <option value="00:00 - 02:00">00:00 - 02:00</option>
+                          <option value="00:20 - 04:00">02:00 - 04:00</option>
+                          <option value="04:00 - 06:00">04:00 - 06:00</option>
+                          <option value="06:00 - 08:00">06:00 - 08:00</option>
+                          <option value="08:00 - 10:00">08:00 - 10:00</option>
+                          <option value="10:00 - 12:00">10:00 - 12:00</option>
+                          <option value="12:00 - 14:00">12:00 - 14:00</option>
+                          <option value="14:00 - 16:00">14:00 - 16:00</option>
+                          <option value="16:00 - 18:00">16:00 - 18:00</option>
+                          <option value="18:00 - 20:00">18:00 - 20:00</option>
+                          <option value="20:00 - 22:00">20:00 - 22:00</option>
+                          <option value="22:00 - 00:00">22:00 - 00:00</option>
+                      </select>
+                      
+                      </div>
+                      <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Footer -->
+        <footer class="footer">
+          <div class="container-fluid d-flex justify-content-between">
+            <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright ©
+            </span>
+            <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
+              Free
+            </span>
+          </div>
+        </footer>
+        <!-- End Footer -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and other scripts -->
+  <script src="{% static 'assets/vendors/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Set the date input to tomorrow's date
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowDate = tomorrow.toISOString().split('T')[0];
+      document.getElementById('date').value = tomorrowDate;
+    });
+  </script>
+  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js'%}"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="{% static 'assets/vendors/chart.js/Chart.min.js'%}"></script>
+  <script src="{% static 'assets/js/jquery.cookie.js'%}" type="text/javascript"></script>
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="{% static 'assets/js/off-canvas.js'%}"></script>
+  <script src="{% static 'assets/js/hoverable-collapse.js'%}"></script>
+  <script src="{% static 'assets/js/misc.js'%}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page -->
+  <script src="{% static 'assets/js/dashboard.js'%}"></script>
+  <script src="{% static 'assets/js/todolist.js'%}"></script>
+
+  <!--JS for basic tasks-->
+  <script src="{% static 'assets/js/myjs.js'%}"></script>
+  <script src="{% static 'assets/js/loader.js'%}"></script>
+</body>
+
+</html>
+
+{% endblock %}

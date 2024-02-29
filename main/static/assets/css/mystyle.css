@@ -1,0 +1,128 @@
+.card-body:hover {
+    box-shadow: 5px 4px 9px 2px #5c5c5c;
+}
+
+.sidebar .nav .nav-item:hover {
+    background-color: #eeeded;
+}
+
+.sidebar .nav .nav-link:hover, .menu-title:hover {
+    color: black !important;
+}
+
+.btn-gradient-primary,.btn-primary,.btn-primary-a
+{
+background: linear-gradient(to right, 	#787879, #4b4b4d) !important;
+border-radius: 10px !important;
+border-color: #4b4b4d;
+}
+.bg-gradient-primary
+{
+background: linear-gradient(to right, 	#c3c3ef, #4b4b4d) !important;
+box-shadow: 0px 3px 8.3px 0.7px #787879 !important;
+}
+.menu-icon{
+    color:#3e3e42 !important;
+}
+.page-title .page-title-icon{
+    box-shadow: #4b4b4d !important;
+
+}
+.bg-gradient-danger{
+background: linear-gradient(to right, #ffbf96, #fe7070) !important;
+}
+.bg-gradient-success{
+    background: linear-gradient(to right, #84d9b7, #07cd8a) !important;
+}
+
+.content-wrapper,  .back{
+    background: #e5e3e5 !important;
+}
+
+.navbar-menu-wrapper{
+    box-shadow: 7.3px 7.5px 18.2px -4.9px #bcbcbc;
+}
+.sidebar{
+    box-shadow: 5.3px 1.5px 11.2px 3.1px #bcbcbc !important;
+}
+.navbar-brand-wrapper{
+    box-shadow: 6.3px -5.5px 11.2px -1.9px #bcbcbc !important;
+}
+
+.active-link{
+    color: black !important;
+}
+
+.main-div{
+    overflow-y: scroll;
+}
+
+#view_users{
+}
+
+/* .view_user_header div{
+    font-size:larger;
+}.view_user_body div{
+    font-size:medium;
+} */
+.view_user_body{
+    /* border: 1px solid black; */
+}
+
+.chart-frame {
+    width:450px;
+    height:450px;
+}
+
+.nav-profile-text1 p{
+    font-weight: 700;
+    font-size: 20px;
+}
+
+
+
+
+/* responsive css */
+
+@media only screen and (max-width: 1285px) {
+    
+    .chart-frame {
+        width:400px;
+        height:450px;
+    }
+}
+@media only screen and (max-width: 1170px) {
+    
+    .chart-frame {
+        width:350px;
+        height:400px;
+    }
+}
+
+@media only screen and (max-width: 460px) {
+    
+    .content-wrapper {
+        padding: 0px;
+    }
+    
+    
+}
+@media only screen and (max-width: 767px) {
+    .nav-profile-text1 p{
+        font-size: 14px;
+        display: block;
+    }
+    
+    
+}
+
+@media only screen and (max-width: 991px) {
+    
+    .navbar-brand-wrapper{
+        box-shadow: 0 !important;
+    } .navbar-menu-wrapper{
+        box-shadow: 0 !important;
+    }
+    
+    
+}

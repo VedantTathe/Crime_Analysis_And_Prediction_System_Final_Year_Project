@@ -1,0 +1,417 @@
+{%load static%} {%block content%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>CrimeAnalysis</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css'%}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css'%}" />
+  <!-- endinject -->
+  <!-- Layout styles -->
+  <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
+  <!-- End layout styles -->
+  <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico'%}" />
+    <!-- MyStyle css -->
+    <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}" />
+  
+</head>
+
+<body>
+  <div class="container-scroller">
+      {% include 'components/navbar.html' %}
+
+      
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper" style="height: 100vh">
+      <!-- partial:partials/_sidebar.html -->
+      {% include 'components/sidebar.html' %}
+      <!-- partial -->
+      <div class="main-panel main-div ">
+        {%if msg%}
+        <div class="alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{msg}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {%if err%}
+        <div class="alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{err}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        <div class="content-wrapper">
+          <div class="page-header">
+            <h3 class="page-title">{{ status }}</h3>
+            <h3 class="page-title"> Crime Details </h3>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Forms</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Details</li>
+              </ol>
+            </nav>
+          </div>
+          
+          {% if data %}
+          
+          <form class="form-sample" action="/showupdate_combined/" method="post" id="crime-form">{% csrf_token %}
+           
+             <div class="col-12">
+               <div class="card">
+                 <div class="card-body">
+                   <h4 class="card-title">Criminal Records</h4>
+                   <p class="card-description">If the Criminal Is not known yet Leave Field Blank*</p>
+ 
+                   <div class="row">
+                     <div class="col-md-6 form-group mb-5">
+                       <label for="" class="col-form-label">First Name</label>
+                       <input type="text" class="form-control" name="fname" id="name" value="{{data.First_Name}}" placeholder="Enter First Name" autocomplete="off"/>
+                     </div>
+ 
+                     <div class="col-md-6 form-group mb-5">
+                       <label for="" class="col-form-label">Last Name</label>
+                       <input type="text" class="form-control" name="lname" id="name" value="{{data.Last_Name}}" placeholder="Enter Last Name" autocomplete="off"/>
+                     </div>
+ 
+                     <div class="col-md-6 form-group mb-5">
+                       <label for="" class="col-form-label">Age</label>
+                       <input type="number" class="form-control"min="1" max="100" name="age" id="age" value="{{data.Age}}" placeholder="Age" autocomplete="off"/>
+                     </div>
+ 
+                     <div class="col-md-6 form-group mb-5">
+                       <label for="" class="col-form-label">Date of Birth</label>
+                       <input type="date" class="form-control" value="{{ data.Date_of_Birth }}" name="dob" id="date" />{{ data.Date_of_Birth }}
+                     </div>
+ 
+                     <div class="col-md-6 form-group mb-5">
+                       <label for="" class="col-form-label">Aadhar Number</label>
+                       <input type="number" maxlength="12" oninput="this.value = this.value.slice(0, 12);" value="{{data.Aadhar_No}}" class="form-control" name="addhar" id="name" placeholder="Enter Aadhar No. #"autocomplete="off"/>
+                     </div>
+ 
+                     <div class="col-md-6 form-group mb-5">
+                       <label for="Type" class="col-form-label">Gender *</label>
+                       <select name="gender" id="CrimeType" class="form-control" required>
+                         <option>Select</option>
+                         <option value="Male" {% if data.Gender == 'MALE' %}selected{% endif %}>Male</option>
+                         <option value="Female" {% if data.Gender == 'FEMALE' %}selected{% endif %}>Female</option>
+                       </select>
+                     </div>
+ 
+                     <div class="col-md-6 form-group mb-5">
+                       <label for="" class="col-form-label">Phone</label>
+                       <input type="number" maxlength="10" oninput="this.value = this.value.slice(0, 10);" value="{{data.Phone_No}}" class="form-control" name="phone" id="phone" placeholder="Phone #" autocomplete="off"/>
+                     </div>
+ 
+                     <div class="col-md-6 form-group mb-5">
+                       <label for="" class="col-form-label">Height</label>
+                       <input type="number" class="form-control" name="hight" id="hight" value="{{data.Height}}" placeholder="Hight (cm) #" autocomplete="off" />
+                     </div>
+ 
+                     <div class="col-md-12 form-group mb-5">
+                       <label for="address" class="col-form-label">Address</label>
+                       <textarea class="form-control" name="address" id="address" cols="30" rows="4" 
+                         placeholder="Write data Address" autocomplete="off">{{data.Address}}</textarea>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+             </div>
+         </div>
+         <div class="content-wrapper">
+           <div class="col-12">
+             <div class="card">
+               <div class="card-body">
+                 <h4 class="card-title">Crime Details</h4>
+                 <p class="card-description">Crime</p>
+ 
+                 <div class="row">
+                   <div class="col-md-6 form-group mb-5">
+                     <label for="" class="col-form-label"> FIR Number *</label>
+                     <input type="number" class="form-control" name="firno" id="fir" value="{{data.FIR_No}}" placeholder="FIR Number #" required autocomplete="off" />
+                   </div>
+ 
+                   <div class="col-md-6 form-group mb-5">
+                     <label for="Type" class="col-form-label">Type of Crime *</label>
+                     <select name="CrimeType" id="CrimeType" class="form-control" required>
+                       <option>Select</option>
+                       <option value="pocket theft" {% if data.Type_of_Crime == 'pocket theft' %}selected{% endif %}>Pocket Theft</option>
+                         <option value="chain theft" {% if data.Type_of_Crime == 'chain theft' %}selected{% endif %}>Chain Theft</option>
+                         <option value="bicycle theft" {% if data.Type_of_Crime == 'bicycle theft' %}selected{% endif %}>Bicycle Theft</option>
+                         <option value="two-wheeler theft" {% if data.Type_of_Crime == 'two-wheeler theft' %}selected{% endif %}>Two-wheeler Theft</option>
+                         <option value="four-wheeler theft" {% if data.Type_of_Crime == 'four-wheeler theft' %}selected{% endif %}>Four-wheeler Theft</option>
+                         <option value="other vehicle theft" {% if data.Type_of_Crime == 'other vehicle theft' %}selected{% endif %}>Other Vehicle Theft</option>
+                         <option value="vehicle parts theft" {% if data.Type_of_Crime == 'vehicle parts theft' %}selected{% endif %}>Vehicle Parts Theft</option>
+                         <option value="other theft" {% if data.Type_of_Crime == 'other theft' %}selected{% endif %}>Other Theft</option>
+                         <option value="commercial robbery" {% if data.Type_of_Crime == 'commercial robbery' %}selected{% endif %}>Commercial Robbery</option>
+                         <option value="technical robbery" {% if data.Type_of_Crime == 'technical robbery' %}selected{% endif %}>Technical Robbery</option>
+                         <option value="priparing to robbery" {% if data.Type_of_Crime == 'priparing to robbery' %}selected{% endif %}>Priparing to Robbery</option>
+                         <option value="other robbery" {% if data.Type_of_Crime == 'other robbery' %}selected{% endif %}>Other Robbery</option>
+                         <option value="daytime burglary" {% if data.Type_of_Crime == 'daytime burglary' %}selected{% endif %}>Daytime Burglary</option>
+                         <option value="night burglary" {% if data.Type_of_Crime == 'night burglary' %}selected{% endif %}>Night Burglary</option>
+                         <option value="culpable homicide" {% if data.Type_of_Crime == 'culpable homicide' %}selected{% endif %}>Culpable Homicide</option>
+                         <option value="forcible theft" {% if data.Type_of_Crime == 'forcible theft' %}selected{% endif %}>Forcible Theft</option>
+                         <option value="rape" {% if data.Type_of_Crime == 'rape' %}selected{% endif %}>Rape</option>
+                         <option value="murder" {% if data.Type_of_Crime == 'murder' %}selected{% endif %}>Murder</option>
+                         <option value="attempt murder" {% if data.Type_of_Crime == 'attempt murder' %}selected{% endif %}>Attempt to Murder</option>
+                         <option value="betrayal" {% if data.Type_of_Crime == 'betrayal' %}selected{% endif %}>Betrayal</option>
+                         <option value="riot" {% if data.Type_of_Crime == 'riot' %}selected{% endif %}>Riot</option>
+                         <option value="injury" {% if data.Type_of_Crime == 'injury' %}selected{% endif %}>Injury</option>
+                         <option value="molestation" {% if data.Type_of_Crime == 'molestation' %}selected{% endif %}>Molestation</option>
+                         <option value="gambling" {% if data.Type_of_Crime == 'gambling' %}selected{% endif %}>Gambling</option>
+                         <option value="prohibition" {% if data.Type_of_Crime == 'prohibition' %}selected{% endif %}>Prohibition</option>
+                         <option value="other" {% if data.Type_of_Crime == 'other' %}selected{% endif %}>Other</option>
+                     </select>
+                   </div>
+ 
+                   <div class="col-md-6 form-group mb-5">
+                     <label for="" class="col-form-label">Number of of Person Involve *</label>
+                     <input type="number" class="form-control" name="nop" id="nop" value="{{data.Number_Of_Person_Involve}}" placeholder="Number of Person #" required autocomplete="off"/>
+                   </div>
+ 
+                   <div class="col-md-6 form-group mb-5">
+                     <label for="Type" class="col-form-label">Weapons use for Crime *</label>
+                     <select name="CrimeWeapons" id="CrimeWeapons" class="form-control" required>
+                       <option>Select</option>
+                       <option value="Personal Weapons" {% if data.Weapons_use_for_Crime == 'PERSONAL WEAPONS' %}selected{% endif %}>Personal Weapons (Hands & feet)</option>
+                       <option value="Firearms" {% if data.Weapons_use_for_Crime == 'Firearms' %}selected{% endif %}>Firearms (Handguns, etc.)</option>
+                       <option value="Edged Weapons" {% if data.Weapons_use_for_Crime == 'EDGED WEAPONS' %}selected{% endif %}>Edged Weapons (Knives, Broken bottles, etc.)</option>
+                       <option value="Blunt Weapons" {% if data.Weapons_use_for_Crime == 'BLUNT WEAPONS' %}selected{% endif %}>Blunt Weapons (Bats, Pipes, etc.)</option>
+                       <option value="Explosives" {% if data.Weapons_use_for_Crime == 'EXPLOSIVES' %}selected{% endif %}>Explosives</option>
+                       <option value="Chemical Weapons" {% if data.Weapons_use_for_Crime == 'CHEMICAL WEAPONS' %}selected{% endif %}>Chemical Weapons</option>
+                       <option value="Other" {% if data.Weapons_use_for_Crime == 'Other' %}selected{% endif %}>Other</option>
+                     </select>
+                   </div>
+
+                   {% comment %} value="{{ data.date_of_crime|date:'Y-m-d' }}" and {% endcomment %}
+                     
+                   <div class="col-md-6 form-group mb-5">
+                    <label for="" class="col-form-label">Date of Crime *</p></label>
+                    <input type="date" class="form-control" name="Cdate"  value="{{ data.Date_of_Crime }}" id="date" required />{{ data.Date_of_Crime }}
+                </div>
+                
+                   <div class="col-md-6 form-group mb-5">
+                     <label for=" " class="col-form-label">Time Period of Crime *</label>
+                     <select name="Timeperiod" id="timeperiod" class="form-control" required>
+                       <option>Select</option>
+                       <option value="00:00 - 02:00" {% if data.Time_Period_of_Crime == '00:00 - 02:00' %}selected{% endif %}>00:00 - 02:00</option>
+                       <option value="00:20 - 04:00" {% if data.Time_Period_of_Crime == '00:20 - 04:00' %}selected{% endif %}>00:20 - 04:00</option>
+                       <option value="04:00 - 06:00" {% if data.Time_Period_of_Crime == '04:00 - 06:00' %}selected{% endif %}>04:00 - 06:00</option>
+                       <option value="06:00 - 08:00" {% if data.Time_Period_of_Crime == '06:00 - 08:00' %}selected{% endif %}>06:00 - 08:00</option>
+                       <option value="08:00 - 10:00" {% if data.Time_Period_of_Crime == '08:00 - 10:00' %}selected{% endif %}>08:00 - 10:00</option>
+                       <option value="10:00 - 12:00" {% if data.Time_Period_of_Crime == '10:00 - 12:00' %}selected{% endif %}>10:00 - 12:00</option>
+                       <option value="12:00 - 14:00" {% if data.Time_Period_of_Crime == '12:00 - 14:00' %}selected{% endif %}>12:00 - 14:00</option>
+                       <option value="14:00 - 16:00" {% if data.Time_Period_of_Crime == '14:00 - 16:00' %}selected{% endif %}>14:00 - 16:00</option>
+                       <option value="16:00 - 18:00" {% if data.Time_Period_of_Crime == '16:00 - 18:00' %}selected{% endif %}>16:00 - 18:00</option>
+                       <option value="18:00 - 20:00" {% if data.Time_Period_of_Crime == '18:00 - 20:00' %}selected{% endif %}>18:00 - 20:00</option>
+                       <option value="20:00 - 22:00" {% if data.Time_Period_of_Crime == '20:00 - 22:00' %}selected{% endif %}>20:00 - 22:00</option>
+                       <option value="22:00 - 00:00" {% if data.Time_Period_of_Crime == '22:00 - 00:00' %}selected{% endif %}>22:00 - 00:00</option>
+                     </select>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+         <div class="content-wrapper">
+           <div class="col-12">
+             <div class="card">
+               <div class="card-body">
+                 <h4 class="card-title">Vehicle Details</h4>
+                 {% comment %} <p class="card-description">(Optional)</p> {% endcomment %}
+                 <div class="row">
+                   <div class="col-md-6 form-group mb-5">
+                     <label for=" " class="col-form-label">Vehicle use *</label>
+                     <select name="vehicle" id="Vehicle" class="form-control" required>
+                       <option value="Select" {% if data.Vehicle_use == 'SELECT' %}selected{% endif %}>Select</option>
+                       <option value="None" {% if data.Vehicle_use == 'NONE' %}selected{% endif %}>None</option>
+                       <option value="Moped" {% if data.Vehicle_use == 'MOPED' %}selected{% endif %}>Moped</option>
+                       <option value="Pasion" {% if data.Vehicle_use == 'PASION' %}selected{% endif %}>Pasion</option>
+                       <option value="Bullet" {% if data.Vehicle_use == 'BULLET' %}selected{% endif %}>Bullet</option>
+                       <option value="Unicon" {% if data.Vehicle_use == 'UNICON' %}selected{% endif %}>Unicon</option>
+                       <option value="KTM" {% if data.Vehicle_use == 'KTM' %}selected{% endif %}>KTM</option>
+                       <option value="Other" {% if data.Vehicle_use == 'OTHER' %}selected{% endif %}>Other</option>
+                     </select>
+                   </div>
+ 
+                   
+                     <div class="col-md-6 form-group mb-5 hide_vehicle1">
+                       <label for="" class="col-form-label"> Vehicle Number </label>
+                       <input type="text" class="form-control" name="vno" id="vno" value="{{data.Vehicle_No}}" placeholder="Vehicle Number #" autocomplete="off"/>
+                     </div>
+   
+                     <div class="col-md-6 form-group mb-5 hide_vehicle1">
+                       <label for=" " class="col-form-label">Number of Person sitting on Vehicle
+                       </label>
+                       <select name="vnp" id="Vnp" class="form-control">
+                         <option {% if data.No_of_Person_on_Vehicle == 'SELECT' %}selected{% endif %}>select</option>
+                           <option value="None" {% if data.No_of_Person_on_Vehicle == 'NONE' %}selected{% endif %}>None</option>
+                           <option value="Single" {% if data.No_of_Person_on_Vehicle == 'SINGLE' %}selected{% endif %}>Single</option>
+                           <option value="Double" {% if data.No_of_Person_on_Vehicle == 'DOUBLE' %}selected{% endif %}>Double</option>
+                           <option value="Triple" {% if data.No_of_Person_on_Vehicle == 'TRIPLE' %}selected{% endif %}>Triple</option>
+                       </select>
+                     </div>
+   
+                     <div class="col-md-6 form-group mb-5 hide_vehicle1">
+                       <label for=" " class="col-form-label">Discription of Person sitting on Vehicle
+                       </label>
+                       <select name="wearp" class="form-control" >
+                         <option {% if data.Discription_of_Person_sitting_on_Vehicle == 'SELECT' %}selected{% endif %}>Select</option>
+                         <option value="None" {% if data.Discription_of_Person_sitting_on_Vehicle == 'NONE' %}selected{% endif %}>None</option>
+                         <option value="Wearing Helmet" {% if data.Discription_of_Person_sitting_on_Vehicle == 'WEARING HELMET' %}selected{% endif %}>Wearing Helmet</option>
+                         <option value="Wearing Mask" {% if data.Discription_of_Person_sitting_on_Vehicle == 'WEARING MASK' %}selected{% endif %}>Wearing Mask</option>
+                         <option value="Wearing Both" {% if data.Discription_of_Person_sitting_on_Vehicle == 'WEARING BOTH' %}selected{% endif %}>Wearing Both</option>
+                         <option value="No Mask And Helmet" {% if data.Discription_of_Person_sitting_on_Vehicle == 'NO MASK AND HELMET' %}selected{% endif %}>No Mask And Helmet</option>
+                       </select>
+                     </div>
+   
+                     <div class="col-md-12 form-group mb-5 hide_vehicle1">
+                       <label for="address" class="col-form-label">Discription of Vehicle </label>
+                       <textarea class="form-control" name="discVehi" id="address" cols="30" rows="4"
+                       placeholder="Vehicle Discription"  autocomplete="off">{{data.Description_of_Vehicle}}</textarea>
+                     </div>
+                   
+                   </div>
+               </div>
+             </div>
+           </div>
+         </div>
+         <div class="content-wrapper">
+           <div class="col-12">
+             <div class="card">
+               <div class="card-body">
+                 <h4 class="card-title">Other Details</h4>
+                 <p class="card-description">Other Required Information</p>
+                 <div class="row">
+                   <div class="col-md-6 form-group mb-5">
+                     <label for="" class="col-form-label"> Crime Spot *</label>
+                     <input type="text" class="form-control" name="crimesp" id="csp" value="{{data.Crime_Spot}}" placeholder="Crime Spot " autocomplete="off" required />
+                   </div>
+ 
+                   <div class="col-md-6 form-group mb-5">
+                     <label for="" class="col-form-label"> Pincode *</label>
+                     <input type="number" maxlength="6" class="form-control" name="pincd" id="vno" value="{{data.Pincode}}" placeholder="Pincode #" required autocomplete="off"/>
+                   </div>
+ 
+                   <div class="col-md-6 form-group mb-5">
+                     <label for=" " class="col-form-label">Landmark* {{data.Landmark}}
+                     </label>
+                     <select name="Landmark" id=" " class="form-control" required>
+                       <option {% if data.Landmark == 'Select' %}selected{% endif %}>Select</option>
+                       <option value="Colony Road" {% if data.Landmark == 'COLONY ROAD' %}selected{% endif %}>Colony Road</option>
+                       <option value="Garden" {% if data.Landmark == 'GARDEN' %}selected{% endif %}>Garden</option>
+                       <option value="Market" {% if data.Landmark == 'MARKET' %}selected{% endif %}>Market</option>
+                       <option value="Mall" {% if data.Landmark == 'MALL' %}selected{% endif %}>Mall</option>
+                       <option value="Temple" {% if data.Landmark == 'TEMPLE' %}selected{% endif %}>Temple</option>
+                       <option value="Public Program" {% if data.Landmark == 'PUBLIC PROGRAM' %}selected{% endif %}>Public Program</option>
+                       <option value="Other Places" {% if data.Landmark == 'OTHER PLACES' %}selected{% endif %}>Other Places</option>
+                     </select>
+                   </div>
+                   <div class="col-md-6 form-group mb-5">
+                     <label for=" " class="col-form-label">Status of crime* </label>
+                     <select name="Status" id="Status" class="form-control" required>
+                       <option value="Detected" {% if data.Status == 'Detected' %}selected{% endif %}>Detected</option>
+                       <option value="Not Detected" {% if data.Status == 'Not Detected' %}selected{% endif %}>Not Detected</option>
+                     </select>
+                   </div>
+ 
+                   {% comment %} <div class="col-md-12 form-group mb-5">
+                     <label for="address" class="col-form-label">Discription of Crime Spot </label>
+                     <textarea class="form-control" name="discsp" id="DiscSp" cols="30" rows="4"
+                     placeholder="Crime Spot Discription"  autocomplete="off">{{data.Discription_of_Crime_Spot}}</textarea>
+                   </div> {% endcomment %}
+                   <div class="col-md-6 form-group mb-5">
+                    <label for="address" class="col-form-label">Discription of Crime Spot </label>
+                    <textarea class="form-control" name="discsp" id="DiscSp" cols="30" rows="3"
+                      placeholder="Crime Spot Discription" autocomplete="off">{{data.Discription_of_Crime_Spot}}</textarea>
+                  </div>
+                  <div class="col-md-6 form-group mb-5">
+                    <label for=" " class="col-form-label">choose police station</label>
+                    <select name="Police_Station" id=" " class="form-control" required><option>Select</option>
+                      <option value="BHOSARI" {% if data.Police_Station == 'BHOSARI' %}selected{% endif %}>BHOSARI</option>
+                      <option value="BHOSARI MIDC" {% if data.Police_Station == 'BHOSARI MIDC' %}selected{% endif %}>BHOSARI MIDC</option>
+                      <option value="CHIKHALI" {% if data.Police_Station == 'CHIKHALI' %}selected{% endif %}>CHIKHALI</option>
+                      <option value="PIMPRI" {% if data.Police_Station == 'PIMPRI' %}selected{% endif %}>PIMPRI</option>
+                      <option value="CHINCHWAD" {% if data.Police_Station == 'CHINCHWAD' %}selected{% endif %}>CHINCHWAD</option>
+                      <option value="NIGADI" {% if data.Police_Station == 'NIGADI' %}selected{% endif %}>NIGADI</option>
+                      <option value="CHAKAN" {% if data.Police_Station == 'CHAKAN' %}selected{% endif %}>CHAKAN</option>
+                      <option value="ALANDI" {% if data.Police_Station == 'ALANDI' %}selected{% endif %}>ALANDI</option>
+                      <option value="DIGHI" {% if data.Police_Station == 'DIGHI' %}selected{% endif %}>DIGHI</option>
+                      <option value="MHALUNGE" {% if data.Police_Station == 'MHALUNGE' %}selected{% endif %}>MHALUNGE</option>
+                      <option value="SANGHI" {% if data.Police_Station == 'SANGHI' %}selected{% endif %}>SANGHI</option>
+                      <option value="WAKAD" {% if data.Police_Station == 'WAKAD' %}selected{% endif %}>WAKAD</option>
+                      <option value="HINJEWADI" {% if data.Police_Station == 'HINJEWADI' %}selected{% endif %}>HINJEWADI</option>
+                      <option value="RAVET" {% if data.Police_Station == 'RAVET' %}selected{% endif %}>RAVET</option>
+                      <option value="DEHUROAD" {% if data.Police_Station == 'DEHUROAD' %}selected{% endif %}>DEHUROAD</option>
+                      <option value="TALEGAON DABHADE" {% if data.Police_Station == 'TALEGAON DABHADE' %}selected{% endif %}>TALEGAON DABHADE</option>
+                      <option value="SHIRGAON"> {% if data.Police_Station == 'SHIRGAON' %}selected{% endif %}SHIRGAON</option>
+                      <option value="TALEGAON MIDC" {% if data.Police_Station == 'TALEGAON MIDC' %}selected{% endif %}>TALEGAON MIDC</option>
+                    </select>
+                  </div>
+                   <div class="col-md-6 form-group mb-5">
+                    <label for="" class="col-form-label"> Longitude</label>
+                    <input type="number" class="form-control" name="Longitude" id="longitude" placeholder="Longitude #" autocomplete="off" {% if data.Longitude %}value="{{ data.Longitude }}"{% endif %} />
+                    
+                  </div>
+                  <div class="col-md-6 form-group mb-5">
+                    <label for="" class="col-form-label"> Latitude</label>
+                    <input type="number" class="form-control" name="Latitude" id="Latitude" placeholder="Latitude #" autocomplete="off" {% if data.Latitude %}value="{{ data.Latitude }}"{% endif %} />
+                    
+                  </div>
+                  <div class="col-md-12 form-group">
+                     <input type="submit" value="Update" class="btn btn-primary rounded-0 py-2 px-4" />
+                     <span class="submitting"></span>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+         --------------------------------------------------------------------------------------------------
+         
+         
+        </form>
+        {%else%}
+        <h1>Data Not Found</h1>
+        {%endif%}
+           
+
+        <footer class="footer">
+          <div class="container-fluid d-flex justify-content-between">
+            <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © </span>
+            <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
+              Free
+            </span>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- partial -->
+  </div>
+ 
+
+  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js'%}"></script>
+
+  <!-- inject:js -->
+  <script src="{% static 'assets/js/off-canvas.js'%}"></script>
+  <script src="{% static 'assets/js/hoverable-collapse.js'%}"></script>
+  <script src="{% static 'assets/js/misc.js'%}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page -->
+  <script src="{% static 'assets/js/file-upload.js'%}"></script>
+  <script src="{% static 'assets/js/myjs.js'%}"></script>
+  <!-- End custom js for this page -->
+  
+</div>
+
+
+</body>
+
+</html>
+{%endblock%}

@@ -1,0 +1,625 @@
+{%load static%} {%block content%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>CrimeAnalysis</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css'%}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css'%}" />
+  <!-- endinject -->
+  <!-- Layout styles -->
+  <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
+  <!-- End layout styles -->
+  <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico'%}" />
+    <!-- MyStyle css -->
+    <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}" />
+   <style>
+    input[type="text"] {
+      border: 1px solid #888888;
+    }
+
+    input[type="number"] {
+      border: 1px solid #888888;
+    }
+
+    input[type="date"] {
+      border: 1px solid #888888; 
+    }
+
+    input[type="textarea"] {
+      border: 1px solid #888888; 
+    }
+
+    input[type="option"] {
+      border: 1px solid #888888; 
+    }
+    select.form-control {
+      border: 1px solid #888888; 
+    }
+      textarea.form-control {
+      border: 1px solid #888888; 
+    }
+
+    .form-control{
+      color: #5d5d5d; 
+    }
+
+    .form-sample input::placeholder,
+    .form-sample textarea::placeholder,
+    .form-sample select::placeholder,
+    .form-sample label::placeholder{
+      color: #888888; 
+    }
+
+    .switch {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(60,64,67);
+  color: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.mic-on, .mic-off {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all .3s ease-in-out;
+}
+
+.mic-on {
+  z-index: 4;
+}
+
+.mic-off {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  opacity: 0;
+}
+
+.switch:hover {
+  background-color: rgba(60,64,67, 0.8);
+}
+
+#checkbox {
+  display: none;
+}
+
+#checkbox:checked + .switch {
+  background-color: red
+}
+
+#checkbox:checked + .switch .mic-off {
+  opacity: 1;
+}
+
+#checkbox:active + .switch {
+  scale: 1.2;
+}
+
+.switch-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .switch {
+    margin-right: 10px; /* Adjust the margin as needed */
+  }
+
+  .mic-on,
+  .mic-off {
+    display: flex;
+    align-items: center;
+  }
+
+  .card-title {
+    margin: 0;
+  }
+   </style>
+</head>
+
+<body>
+  <div class="container-scroller">
+      {% include 'components/navbar.html' %}
+
+
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper" style="height: 100vh">
+      <!-- partial:partials/_sidebar.html -->
+      {% include 'components/sidebar.html' %}
+      <!-- partial -->
+      <div class="main-panel main-div ">
+        {%if msg%}
+        <div class="alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{msg}}
+              {% comment %} {{data.type}} {% endcomment %}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {%if err%}
+        <div class="alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{err}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        <div class="content-wrapper">
+          <div class="page-header"> 
+            <h3 class="page-title">{{ status }}</h3>
+            <h3 class="page-title"> Register Crime </h3>
+            <nav aria-label="breadcrumb">
+              {% comment %} <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Forms</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Details</li>
+              </ol> {% endcomment %}
+            </nav>
+          </div>
+
+          <form class="form-sample" action="/RegisterCrime.html/" method="post" id="crime-form" name="crime-form">{% csrf_token %}
+            <div class="col-md-12 form-group m-3">
+              <label for="" class="col-form-label ms-2 m-0">Enter Crime Description</label>
+              <div class="input-group">
+                  <input type="text" id="userInput" class="form-control m-2" name="crime_description"
+                   placeholder="Enter Crime Description" autocomplete="off">
+                  <div onclick="document.getElementById('crime-form').submit();" class="input-group-append mt-1">
+                      <label class="switch m-0" for="checkbox">
+                          <div class="mic-on ">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-mic-fill" viewBox="0 0 16 16"> <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0V3z"></path> <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5z"></path> </svg>
+                      </div>
+                      <div class="mic-off ">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-mic-mute-fill" viewBox="0 0 16 16"> <path d="M13 8c0 .564-.094 1.107-.266 1.613l-.814-.814A4.02 4.02 0 0 0 12 8V7a.5.5 0 0 1 1 0v1zm-5 4c.818 0 1.578-.245 2.212-.667l.718.719a4.973 4.973 0 0 1-2.43.923V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 1 0v1a4 4 0 0 0 4 4zm3-9v4.879L5.158 2.037A3.001 3.001 0 0 1 11 3z"></path> <path d="M9.486 10.607 5 6.12V8a3 3 0 0 0 4.486 2.607zm-7.84-9.253 12 12 .708-.708-12-12-.708.708z"></path> </svg>
+                      </div>
+                      </label>
+                  </div>
+              </div>
+              <input type="submit" name="submitbtn" class="btn btn-primary rounded-0 py-2 px-4 ms-2">
+              <input type="checkbox" id="checkbox">
+            </div>
+        </form>
+        <!-- <button id='updateButton' name="micforallbtn" class="btn btn-primary rounded-0 py-2 px-4" value="Speak all data one by one">Speak all data one by one</button>   -->
+        
+          <form class="form-sample" action="/addcrime/" method="post" id="crime-form" name="criminal-record">{% csrf_token %}
+           
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <div>
+                  <h4 class="card-title">Criminal Records</h4>
+                  <p class="card-description">If the Criminal Is not known yet Leave Field Blank*</p>
+                  <input type="checkbox" id="checkbox">
+                  <div class="switch-container">
+                    <div >
+                    <label  id='updateButton' class="switch" for="checkbox" >
+                      <div class="mic-on mic_on" id="updateButton">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-mic-fill" viewBox="0 0 16 16"> <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0V3z"></path> <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5z"></path> </svg>
+                      </div>
+                      <div class="mic-off mic_off">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-mic-mute-fill" viewBox="0 0 16 16"> <path d="M13 8c0 .564-.094 1.107-.266 1.613l-.814-.814A4.02 4.02 0 0 0 12 8V7a.5.5 0 0 1 1 0v1zm-5 4c.818 0 1.578-.245 2.212-.667l.718.719a4.973 4.973 0 0 1-2.43.923V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 1 0v1a4 4 0 0 0 4 4zm3-9v4.879L5.158 2.037A3.001 3.001 0 0 1 11 3z"></path> <path d="M9.486 10.607 5 6.12V8a3 3 0 0 0 4.486 2.607zm-7.84-9.253 12 12 .708-.708-12-12-.708.708z"></path> </svg>
+                      </div>
+                    </label>
+                  </div>
+                    <h4 class="card-title">Click On Mic to Speak Data One By One</h4>
+                  </div>
+                  
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 form-group mb-3">
+                      <label for="" class="col-form-label">First Name</label>
+                      <input type="text" class="form-control First-Name" name="fname" id="name" placeholder="Enter First Name" value="{{data.fname}}" autocomplete="off"/>
+                    </div>
+
+                    <div class="col-md-6 form-group mb-3">
+                      <label for="" class="col-form-label">Last Name</label>
+                      <input type="text" class="form-control Last-Name" name="lname" id="name" placeholder="Enter Last Name" value="{{data.lname}}" autocomplete="off"/>
+                    </div>
+
+                    <div class="col-md-6 form-group mb-3">
+                      <label for="" class="col-form-label">Age</label>
+                      <input type="number" class="form-control Age"min="1" max="100" name="age" id="age" placeholder="Age" value="{{data.age}}" autocomplete="off"/>
+                    </div>
+
+                    <div class="col-md-6 form-group mb-3">
+                      <label for="" class="col-form-label">Date of Birth</label>
+                      <input type="date" class="form-control Date-Of-Birth" name="dob" id="date" />
+                    </div>
+
+                    <div class="col-md-6 form-group mb-3">
+                      <label for="" class="col-form-label">Aadhar Number</label>
+                      <input type="number" maxlength="12" oninput="this.value = this.value.slice(0, 12);"  class="form-control Aadhar-Number" name="addhar" id="name" placeholder="Enter Aadhar No. #"autocomplete="off" value="{{daata.aadhar}}"/>
+                    </div>
+
+                    <div class="col-md-6 form-group mb-3">
+                      <label for="Type" class="col-form-label">Gender *</label>
+                      <select name="gender" id="CrimeType" class="form-control Gender" required>
+                        <option>Select</option>
+                        <option {%if data.gender == "male"%} selected{%endif%}>MALE</option>
+                        <option {%if data.gender == "female"%} selected{%endif%}>FEMALE</option>
+                      </select>
+                    </div>
+
+                    <div class="col-md-6 form-group mb-3">
+                      <label for="" class="col-form-label">Phone</label>
+                      <input type="number" maxlength="10" oninput="this.value = this.value.slice(0, 10);" class="form-control Phone" name="phone" id="phone" placeholder="Phone #" autocomplete="off" {%if data.phone %}value="{{data.phone}}"{%endif%}/>
+                    </div>
+
+                    <div class="col-md-6 form-group mb-3">
+                      <label for="" class="col-form-label">Height</label>
+                      <input type="number" class="form-control Height" name="height" id="height" placeholder="Height (cm) #" autocomplete="off" {%if data.height%}value="{{data.height}}{%endif%}"/>
+                    </div>
+
+                    <div class="col-md-12 form-group mb-3">
+                      <label for="address" class="col-form-label">Address</label>
+                      <textarea class="form-control Address" name="address" id="address" cols="30" rows="4"
+                        placeholder="Write Criminal Address" autocomplete="off" {%if data.addrs%}value="{{data.addrs}}"{%endif%}></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="content-wrapper">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">Crime Details</h4>
+                <p class="card-description">Crime</p>
+
+                <div class="row">
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="" class="col-form-label"> FIR Number *</label>
+                    <input type="number" class="form-control F-I-R-Number" name="firno" id="fir" placeholder="FIR Number #" required autocomplete="off" {% if firno %}value="{{ firno }}"{% endif %} />
+                    
+                  </div>
+                
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="Type" class="col-form-label">Type of Crime *</label>
+                    <select name="CrimeType" id="CrimeType" class="form-control Type-Of-Crime" required>
+                      <option value="" >Select</option>
+                      <option value="pocket theft" {%if data.type == "POCKET THEFT"%}selected{%endif%}>POCKET THEFT</option>
+                      <option value="chain theft" {%if data.type == "CHAIN THEFT"%}selected{%endif%}>CHAIN THEFT</option>
+                      <option value="bicycle theft" {%if data.type == "BICYCLE THEFT"%}selected{%endif%}>BICYCLE THEFT</option>
+                      <option value="two-wheeler theft" {%if data.type == "TWO-WHEELER THEFT"%}selected{%endif%}>TWO-WHEELER THEFT</option>
+                      <option value="four-wheeler theft" {%if data.type == "FOUR-WHEELER THEFT"%}selected{%endif%}>FOUR-WHEELER THEFT</option>
+                      <option value="other vehicle theft" {%if data.type == "OTHER VEHICLE THEFT"%}selected{%endif%}>OTHER VEHICLE THEFT</option>
+                      <option value="vehicle parts theft" {%if data.type == "VEHICLE PARTS THEFT"%}selected{%endif%}>VEHICLE PARTS THEFT</option>
+                      <option value="other theft" {%if data.type == "OTHER THEFT"%}selected{%endif%}>OTHER THEFT</option>
+                      <option value="commercial robbery" {%if data.type == "COMMERCIAL ROBBERY"%}selected{%endif%}>COMMERCIAL ROBBERY</option>
+                      <option value="technical robbery" {%if data.type == "TECHNICAL ROBBERY"%}selected{%endif%}>TECHNICAL ROBBERY</option>
+                      <option value="priparing to robbery" {%if data.type == "PRIPARING TO ROBBERY"%}selected{%endif%}>PRIPARING TO ROBBERY</option>
+                      <option value="other robbery" {%if data.type == "OTHER ROBBERY"%}selected{%endif%}>OTHER ROBBERY</option>
+                      <option value="daytime burglary" {%if data.type == "DAYTIME BURGLARY"%}selected{%endif%}>DAYTIME BURGLARY</option>
+                      <option value="night burglary" {%if data.type == "NIGHT BURGLARY"%}selected{%endif%}>NIGHT BURGLARY</option>
+                      <option value="culpable homicide" {%if data.type == "CULPABLE HOMICIDE"%}selected{%endif%}>CULPABLE HOMICIDE</option>
+                      <option value="forcible theft" {%if data.type == "FORCIBLE THEFT"%}selected{%endif%}>FORCIBLE THEFT</option>
+                      <option value="rape" {%if data.type == "RAPE"%}selected{%endif%}>RAPE</option>
+                      <option value="murder" {%if data.type == "MURDER"%}selected{%endif%}>MURDER</option>
+                      <option value="attempt murder" {%if data.type == "ATTEMPT TO MURDER"%}selected{%endif%}>ATTEMPT TO MURDER</option>
+                      <option value="betrayal" {%if data.type == "BETRAYAL"%}selected{%endif%}>BETRAYAL</option>
+                      <option value="riot" {%if data.type == "RIOT"%}selected{%endif%}>RIOT</option>
+                      <option value="injury" {%if data.type == "INJURY"%}selected{%endif%}>INJURY</option>
+                      <option value="molestation" {%if data.type == "MOLESTATION"%}selected{%endif%}>MOLESTATION</option>
+                      <option value="gambling" {%if data.type == "GAMBLING"%}selected{%endif%}>GAMBLING</option>
+                      <option value="prohibition" {%if data.type == "PROHIBITION"%}selected{%endif%}>PROHIBITION</option>
+                      <option value="other" {%if data.type == "OTHER"%}selected{%endif%}>OTHER</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="" class="col-form-label">Number of of Person Involve *</label>
+                    <input type="number" class="form-control Number-Of-Person-Involved" name="nop" id="nop" placeholder="Number of Person #" required autocomplete="off"/>
+                  </div>
+
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="Type" class="col-form-label">Weapons use for Crime *</label>
+                    <select name="CrimeWeapons" id="CrimeWeapons" class="form-control Weapons-Use-For-Crime" required>
+                      <option>Select</option>
+                      <option value="Personal Weapons">Personal Weapons (Hands & feet)</option>
+                      <option value="Firearms">Firearms (Handguns,etc.)</option>
+                      <option value="Edged Weapons">
+                        Edged Weapons (Knives, Broken bottles, etc.)
+                      </option>
+                      <option value="Blunt Weapons">
+                        Blunt Weapons(Bats, Pipes, etc.)
+                      </option>
+                      <option value="Explosives">Explosives</option>
+                      <option value="Chemical Weapons">Chemical Weapons</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="" class="col-form-label">Date of Crime *</label>
+                    <input type="date" class="form-control Date-Of-Crime" name="Cdate" id="date" required />
+                  </div>
+
+                  <div class="col-md-6 form-group mb-3">
+                    <label for=" " class="col-form-label">Time Period of Crime *</label>
+                    <select name="Timeperiod" id="timeperiod" class="form-control Time-Period-Of-Crime" required>
+                      <option>Select</option>
+                      <option value="00:00 - 02:00" {%if "12 AM" in data.time_period and "2 AM" in data.time_period%}selected{%endif%}>00:00 - 02:00</option>
+                      <option value="00:20 - 04:00" {%if "4 AM" in data.time_period and "2 AM" in data.time_period%}selected{%endif%}>02:00 - 04:00</option>
+                      <option value="04:00 - 06:00" {%if "4 AM" in data.time_period and "6 AM" in data.time_period%}selected{%endif%}>04:00 - 06:00</option>
+                      <option value="06:00 - 08:00" {%if "6 AM" in data.time_period and "8 AM" in data.time_period%}selected{%endif%}>06:00 - 08:00</option>
+                      <option value="08:00 - 10:00" {%if "8 AM" in data.time_period and "10 AM" in data.time_period%}selected{%endif%}>08:00 - 10:00</option>
+                      <option value="10:00 - 12:00" {%if "10 AM" in data.time_period and "12 PM" in data.time_period%}selected{%endif%}>10:00 - 12:00</option>
+                      <option value="12:00 - 14:00" {%if "12 PM" in data.time_period and "2 PM" in data.time_period%}selected{%endif%}>12:00 - 14:00</option>
+                      <option value="14:00 - 16:00" {%if "2 PM" in data.time_period and "4 PM" in data.time_period%}selected{%endif%}>14:00 - 16:00</option>
+                      <option value="16:00 - 18:00" {%if "4 PM" in data.time_period and "6 PM" in data.time_period%}selected{%endif%}>16:00 - 18:00</option>
+                      <option value="18:00 - 20:00" {%if "6 PM" in data.time_period and "8 PM" in data.time_period%}selected{%endif%}>18:00 - 20:00</option>
+                      <option value="20:00 - 22:00" {%if "8 PM" in data.time_period and "10 PM" in data.time_period%}selected{%endif%}>20:00 - 22:00</option>
+                      <option value="22:00 - 00:00" {%if "10 PM" in data.time_period and "12 AM" in data.time_period%}selected{%endif%}>22:00 - 00:00</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="content-wrapper">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">Vehicle Details</h4>
+                {% comment %} <p class="card-description">(Optional)</p> {% endcomment %}
+                <div class="row">
+                  <div class="col-md-6 form-group mb-3">
+                    <label for=" " class="col-form-label">Vehicle use *</label>
+                    <select name="vehicle" id="Vehicle" class="form-control Vehicle-Use" required>
+                      <option value="">Select</option>
+                      <option value="None">None</option>
+                      <option value="Moped">Moped</option>
+                      <option value="Pasion">Pasion</option>
+                      <option value="Bullet">Bullet</option>
+                      <option value="Unicon">Unicon</option>
+                      <option value="KTM">KTM</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  
+                    <div class="col-md-6 form-group mb-3 hide_vehicle" style="display: none;">
+                      <label for="" class="col-form-label"> Vehicle Number </label>
+                      <input type="text" class="form-control Vehicle-Number" name="vno" id="vno" placeholder="Vehicle Number #" autocomplete="off"/>
+                    </div>
+  
+                    <div class="col-md-6 form-group mb-3 hide_vehicle" style="display: none;">
+                      <label for=" " class="col-form-label ">Number of Person sitting on Vehicle
+                      </label>
+                      <select name="vnp" id="Vnp" class="form-control Number-Of-Person-Sitting-On-Vehicle">
+                        <option>select</option>
+                        <option value="None">None</option>
+                        <option value="Single">Single</option>
+                        <option value="Double">Double</option>
+                        <option value="Triple">Triple</option>
+                      </select>
+                    </div>
+  
+                    <div class="col-md-6 form-group mb-3 hide_vehicle" style="display: none;">
+                      <label for=" " class="col-form-label ">Discription of Person sitting on Vehicle
+                      </label>
+                      <select name="wearp" class="form-control Description-Of-Person-Sitting-On-Vehicle" >
+                        <option>Select</option>
+                        <option value="None">None</option>
+                        <option value="Wearing Helmet">Wearing Helmet</option>
+                        <option value="Wearing Mask">Wearing Mask</option>
+                        <option value="Wearing Both">Wearing Both</option>
+                        <option value="No Mask And Helmet">No Mask And Helmet</option>
+                      </select>
+                    </div>
+  
+                    <div class="col-md-12 form-group mb-3 hide_vehicle" style="display: none;">
+                      <label for="address" class="col-form-label">Discription of Vehicle </label>
+                      <textarea class="form-control Description-Of-Vehicle" name="discVehi" id="address" cols="30" rows="4"
+                        placeholder="Vehicle Discription" autocomplete="off"></textarea>
+                    </div>
+                  
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="content-wrapper">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">Other Details</h4>
+                <p class="card-description">Other Required Information</p>
+                <div class="row">
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="" class="col-form-label"> Crime Spot *</label>
+                    <input type="text" class="form-control Crime-Spot" name="crimesp" id="csp" placeholder="Crime Spot " autocomplete="off" required />
+                  </div>
+
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="" class="col-form-label"> Pincode *</label>
+                    <input type="number" maxlength="6" class="form-control Pincode" name="pincd" id="vno" placeholder="Pincode #" required autocomplete="off"/>
+                  </div>
+
+                  <div class="col-md-6 form-group mb-3">
+                    <label for=" " class="col-form-label">Discription of Crime Spot (Landmark)*
+                    </label>
+                    <select name="Landmark" id=" " class="form-control Landmark" required>
+                      <option>Select</option>
+                      <option value="Colony Road">Colony Road</option>
+                      <option value="Garden">Garden</option>
+                      <option value="Market">Market</option>
+                      <option value="Mall">Mall</option>
+                      <option value="Temple">Temple</option>
+                      <option value="Public Program">Public Program</option>
+                      <option value="Other Places">Other Places</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 form-group mb-3">
+                    <label for=" " class="col-form-label">Status of crime* </label>
+                    <select name="Status" id="Status" class="form-control Status-Of-Crime" required>
+                      <option value="Detected">Detected</option>
+                      <option value="Not Detected">Not Detected</option>
+                    </select>
+                  </div>
+
+                  {% comment %} <div class="col-md-12 form-group mb-3">
+                    <label for="address" class="col-form-label">Discription of Crime Spot </label>
+                    <textarea class="form-control" name="discsp" id="DiscSp" cols="30" rows="4"
+                      placeholder="Crime Spot Discription" autocomplete="off"></textarea>
+                  </div> {% endcomment %}
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="address" class="col-form-label">Discription of Crime Spot </label>
+                    <textarea class="form-control Description-Of-Crime-Spot" name="discsp" id="DiscSp" cols="30" rows="3"
+                      placeholder="Crime Spot Discription" autocomplete="off"></textarea>
+                  </div>
+                  <div class="col-md-6 form-group mb-3">
+                    <label for=" " class="col-form-label">choose police station</label>
+                    <select name="Police_Station" id=" " class="form-control Police-Station" required><option>Select</option>
+                      <option value="BHOSARI">BHOSARI</option>
+                      <option value="BHOSARI Midc">BHOSARI MIDC</option>
+                      <option value="CHIKHALI">CHIKHALI</option>
+                      <option value="PIMPRI">PIMPRI</option>
+                      <option value="CHINCHWAD">CHINCHWAD</option>
+                      <option value="NIGADI">NIGADI</option>
+                      <option value="CHAKAN">CHAKAN</option>
+                      <option value="ALANDI">ALANDI</option>
+                      <option value="DIGHI">DIGHI</option>
+                      <option value="MHALUNGE">MHALUNGE</option>
+                      <option value="SANGHI">SANGHI</option>
+                      <option value="WAKAD">WAKAD</option>
+                      <option value="HINJEWADI">HINJEWADI</option>
+                      <option value="RAVET">RAVET</option>
+                      <option value="DEHUROAD">DEHUROAD</option>
+                      <option value="TALEGAON DABHADE">TALEGAON DABHADE</option>
+                      <option value="SHIRGAON">SHIRGAON</option>
+                      <option value="TALEGAON MIDC">TALEGAON MIDC</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="" class="col-form-label"> Longitude</label>
+                    <input type="number" class="form-control Longitude" name="Longitude" id="longitude" placeholder="Longitude #" autocomplete="off" {% if Longitude %}value="{{ Longitude }}"{% endif %} />
+                    
+                  </div>
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="" class="col-form-label"> Latitude</label>
+                    <input type="number" class="form-control Latitude" name="Latitude" id="Latitude" placeholder="Latitude #" autocomplete="off" {% if Latitude %}value="{{ Latitude }}"{% endif %} />
+                    
+                  </div>
+                  <div class="col-md-12 form-group">
+                    <input type="submit" value="Submit" class="btn btn-primary rounded-0 py-2 px-4" />
+                    <span class="submitting"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </form>
+        <footer class="footer">
+          <div class="container-fluid d-flex justify-content-between">
+            <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © </span>
+            <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
+              Free
+            </span>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- partial -->
+  </div>
+
+  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js'%}"></script>
+
+  <!-- inject:js -->
+  <script src="{% static 'assets/js/off-canvas.js'%}"></script>
+  <script src="{% static 'assets/js/hoverable-collapse.js'%}"></script>
+  <script src="{% static 'assets/js/misc.js'%}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page -->
+  <script src="{% static 'assets/js/file-upload.js'%}"></script>
+  <script src="{% static 'assets/js/myjs.js'%}"></script>
+  <!-- End custom js for this page -->
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  $(document).ready(function () {
+    function updateFieldSequentially(fields, index) {
+      if (index < fields.length) {
+        var fieldName = fields[index];
+        $.ajax({
+          type: "GET",
+          url: "/readFromVoiceSeparate/" + fieldName + "/",
+          data: {},
+          success: function (data) {
+            // Assuming you have an input field with class fieldName
+            var fieldElement = document.querySelector('.' + fieldName);
+            if (fieldElement) {
+              if (data.query === "terminate") {
+                console.log("Terminating sequential update.");
+                return; // Terminate the function execution
+            }
+            
+              
+
+              if(data.query != "skip")
+              {
+                fieldElement.value = data.query;
+                console.log(data.query);
+              }
+
+              // Call the next function in the sequence
+              updateFieldSequentially(fields, index + 1);
+            }
+          },
+          error: function (error) {
+            console.log("Error:", error);
+          }
+        });
+      }
+    }
+    {% comment %} $('.mic-on, .mic-off').on('click', function () {
+      // Define the fields in the order you want to update
+      var fields = ['First-Name', 'Last-Name', 'Age'];
+      // Start the sequential update
+      updateFieldSequentially(fields, 0); {% endcomment %}
+  
+
+    // Bind the update function to a button click event
+    {% comment %} $('#updateButton').on('click', function () { {% endcomment %}
+    $('.mic_on, .mic_off').on('click', function () {
+      // Define the fields in the order you want to update
+      var fields = ['First-Name', 'Last-Name', 'Age','Date-Of-Birth','Aadhar-Number','Gender','Phone','Height','Address','F-I-R-Number','Type-Of-Crime','Number-Of-Person-Involved','Weapons-Use-For-Crime','Date-Of-Crime','Time-Period-Of-Crime','Vehicle-Use','Vehicle-Number','Number-Of-Person-Sitting-On-Vehicle','Description-Of-Person-Sitting-On-Vehicle','Description-Of-Vehicle','Crime-Spot','Pincode','Landmark','Status-Of-Crime','Description-Of-Crime-Spot','Police-Station','Longitude','Latitude'];
+
+      // Define the fields in the order you want to update
+      {% comment %} var fields = ['F-I-R-Number','Type-Of-Crime','Number-Of-Person-Involved','Weapons-Use-For-Crime','Date-Of-Crime','Time-Period-Of-Crime','Vehicle-Use','Vehicle-Number','Number-Of-Person-Sitting-On-Vehicle','Description-Of-Person-Sitting-On-Vehicle','Description-Of-Vehicle','Crime-Spot','Pincode','Landmark','Status-Of-Crime','Description-Of-Crime-Spot','Police-Station','Longitude','Latitude']; {% endcomment %}
+      
+      // Start the sequential update
+      var check = updateFieldSequentially(fields, 0);
+      if(check === 0)
+      {
+        return; 
+      }
+    });
+  });
+</script>
+
+
+
+
+</body>
+
+</html>
+{%endblock%}

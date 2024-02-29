@@ -1,0 +1,476 @@
+{% comment %} {%load static%} {%block content%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>CrimeAnalysis</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css'%}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css'%}" />
+  <!-- endinject -->
+  <!-- Layout styles -->
+  <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
+  <!-- End layout styles -->
+  <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico'%}" />
+    <!-- MyStyle css -->
+    <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}" />
+
+</head>
+
+<body>
+  <div class="container-scroller">
+      {% include 'components/navbar.html' %}
+
+
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper" style="height: 100vh">
+      <!-- partial:partials/_sidebar.html -->
+      {% include 'components/sidebar.html' %}
+      <!-- partial -->
+      <div class="main-panel main-div ">
+        {%if msg%}
+        <div class="alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{msg}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {%if err%}
+        <div class="alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{err}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        <div class="content-wrapper">
+          <div class="page-header">
+            <h3 class="page-title">{{ status }}</h3>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Forms</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Details</li>
+              </ol>
+            </nav>
+          </div>
+          <form class="form-sample" action="" method="post" id="crime-form">{% csrf_token %}
+           
+            <div class="col-lg-8 col-md-10 col-12 m-auto ">
+              <div class="card">
+                <div class="card-body">
+                  {%if request.method == "GET"%}
+                    <h4 class="card-title">Charts</h4>
+                    <p class="card-description">Select the values from below dropdown list to display chart</p>
+                        <input type="submit" name="special_btn"  value="HOTSPOT1"class="btn  rounded-0 py-2 px-4" />
+                        <input type="submit" name="special_btn" value="HOTSPOT2" class="btn rounded-0 py-2 px-4" />
+                        <input type="submit" name="special_btn" value="HOTSPOT3" class="btn rounded-0 py-2 px-4"/>
+                        <input type="submit" name="special_btn" value="HOTSPOT4" class="btn rounded-0 py-2 px-4"/>
+                        <input type="submit" name="special_btn" value="HOTSPOT5" class="btn rounded-0 py-2 px-4"/>
+
+                    <div class="row">
+                      <div class="col-md-6 form-group mb-5">
+                        <label for="" class="col-form-label">X Axis</label>
+                        <select name="x-axis" class="form-control" >
+                          <option value="">Select</option>
+                          <option>Date of Crime</option>
+                          <option>Count(Status)</option>
+                          <option>Type of Crime</option>
+                          <option>Count(Type of Crime)</option>
+                          <option>Count(Vehicle Used)</option>
+                          <option>Count(Landmark)</option>
+                          <option>Count(Gender)</option>
+                          <option>Age</option>
+                        </select>
+                      </div>
+
+                      <div class="col-md-6 form-group mb-5">
+                        <label for="" class="col-form-label">Y Axis</label>
+                        <select name="y-axis" class="form-control" >
+                          <option value="">Select</option>
+                          <option>Landmark</option>
+                          <option>Type of Crime</option>
+                          <option>Count(Status)</option>
+                          <option>Number_Of_Person Involved</option>
+                          <option>Time Period of Crime</option>
+                          <option>Count(Number_Of_Person Involved)</option>
+                        </select>
+                      </div>
+
+                      <div class="col-md-12 form-group m-auto w-auto ">
+                        <input type="submit" value="Submit" class="btn btn-primary rounded-0 py-2 px-4"/>
+                        <span class="submitting"></span>
+                      </div>
+                    </div>
+                  {%elif result == "Type of Crime/Count(Status)"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe class="w-100 h-100" style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);"   src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653a8295-cc82-445d-85ed-9369f02549f1&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  {%elif result == "Count(Status)/Type of Crime"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653a7fac-e89e-4197-8653-87676cc1db48&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                 </div>
+                  {%elif result == "Count(Landmark)/Time Period of Crime"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bda20-49fd-4d0c-8acd-d0503a641279&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  {%elif result == "Count(Type of Crime)/Number_Of_Person Involved"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653a85e7-ef00-4529-8c56-d1af183e468b&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  {%elif result == "Date of Crime/Landmark"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653a7dca-cc82-4e83-8ad4-9369f0202c1f&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  {%elif result == "Count(Vehicle Used)/Number_Of_Person Involved"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bd8da-eb82-4a7d-8465-ee7d62b7abcd&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  {%elif result == "Count(Gender)/Number_Of_Person Involved"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bda90-7139-43fd-86b6-37a95908d3cb&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  {%elif result == "Age/Count(Number_Of_Person Involved)"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bdbd8-7139-4652-81e8-37a95909c9e7&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  {%elif result == "Date of Crime/Count(Number_Of_Person Involved)"%}
+                  <div class="col-12" style="height:400px;">
+                    iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bdde8-4509-41bc-8721-e86924611cd9&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  {%else%}
+                    <h4 class="card-title text-danger   ">No Chart Available</h4>
+                    <p class="card-description">Select the values from below dropdown list to display chart</p>
+                    <input type="submit" name="special_btn" value="HOTSPOT1"class="btn  rounded-0 py-2 px-4" />
+                    <input type="submit" name="special_btn" value="HOTSPOT2" class="btn rounded-0 py-2 px-4" />
+                    <input type="submit" name="special_btn" value="HOTSPOT3" class="btn rounded-0 py-2 px-4"/>
+                    <input type="submit" name="special_btn" value="HOTSPOT4" class="btn rounded-0 py-2 px-4"/>
+                    <input type="submit" name="special_btn" value="HOTSPOT5" class="btn rounded-0 py-2 px-4"/>
+
+                    
+                    <div class="row">
+                      <div class="col-md-6 form-group mb-5">
+                        <label for="" class="col-form-label">X Axis</label>
+                        <select name="x-axis" class="form-control" >
+                          <option value="">Select</option>
+                          <option>Date of Crime</option>
+                          <option>Count(Status)</option>
+                          <option>Type of Crime</option>
+                          <option>Count(Type of Crime)</option>
+                          <option>Count(Vehicle Used)</option>
+                          <option>Count(Landmark)</option>
+                          <option>Count(Gender)</option>
+                          <option>Age</option>
+                        </select>
+                      </div>
+
+                      <div class="col-md-6 form-group mb-5">
+                        <label for="" class="col-form-label">Y Axis</label>
+                        <select name="y-axis" class="form-control" >
+                          <option value="">Select</option>
+                          <option>Landmark</option>
+                          <option>Type of Crime</option>
+                          <option>Count(Status)</option>
+                          <option>Number_Of_Person Involved</option>
+                          <option>Time Period of Crime</option>
+                          <option>Count(Number_Of_Person Involved)</option>
+                        </select>
+                      </div>
+
+                      <div class="col-md-12 form-group m-auto w-auto ">
+                        <input type="submit" value="Submit" class="btn btn-primary rounded-0 py-2 px-4"/>
+                        <span class="submitting"></span>
+                      </div>
+                    </div>
+                  
+                  {%endif%}
+
+
+                </div>
+              </div>
+            </div>
+        </div>
+        
+      </form>
+        <footer class="footer">
+          <div class="container-fluid d-flex justify-content-between">
+            <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © </span>
+            <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
+              Free
+            </span>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- partial -->
+  </div>
+
+  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js'%}"></script>
+
+  <!-- inject:js -->
+  <script src="{% static 'assets/js/off-canvas.js'%}"></script>
+  <script src="{% static 'assets/js/hoverable-collapse.js'%}"></script>
+  <script src="{% static 'assets/js/misc.js'%}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page -->
+  <script src="{% static 'assets/js/file-upload.js'%}"></script>
+  <script src="{% static 'assets/js/myjs.js'%}"></script>
+  <!-- End custom js for this page -->
+</div>
+</body>
+
+</html>
+{%endblock%} {% endcomment %}
+
+
+{%load static%} {%block content%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>CrimeAnalysis</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css'%}" />
+  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css'%}" />
+  <!-- endinject -->
+  <!-- Layout styles -->
+  <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
+  <!-- End layout styles -->
+  <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico'%}" />
+    <!-- MyStyle css -->
+    <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}" />
+
+</head>
+
+<body>
+  <div class="container-scroller">
+      {% include 'components/navbar.html' %}
+
+
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper" style="height: 100vh">
+      <!-- partial:partials/_sidebar.html -->
+      {% include 'components/sidebar.html' %}
+      <!-- partial -->
+      <div class="main-panel main-div ">
+        {%if msg%}
+        <div class="alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{msg}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {%if err%}
+        <div class="alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
+          <h3>
+              {{err}}
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        <div class="content-wrapper">
+          <div class="page-header">
+            <h3 class="page-title">{{ status }}</h3>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Forms</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Details</li>
+              </ol>
+            </nav>
+          </div>
+          <form class="form-sample" action="" method="post" id="crime-form">{% csrf_token %}
+           
+            <div class="col-lg-8 col-md-10 col-12 m-auto ">
+              <div class="card">
+                <div class="card-body">
+                  {%if request.method == "GET"%}
+                    <h4 class="card-title">Charts</h4>
+                    <p class="card-description">Select the values from below dropdown list to display chart</p>
+                        <input type="submit" name="special_btn"  value="HOTSPOT1"class="btn  rounded-0 py-2 px-4" />
+                        <input type="submit" name="special_btn" value="HOTSPOT2" class="btn rounded-0 py-2 px-4" />
+                        <input type="submit" name="special_btn" value="HOTSPOT3" class="btn rounded-0 py-2 px-4"/>
+                        <input type="submit" name="special_btn" value="HOTSPOT4" class="btn rounded-0 py-2 px-4"/>
+                        <input type="submit" name="special_btn" value="HOTSPOT5" class="btn rounded-0 py-2 px-4"/>
+
+                    <div class="row">
+                      <div class="col-md-6 form-group mb-5">
+                        <label for="" class="col-form-label">X Axis</label>
+                        <select name="x-axis" class="form-control" >
+                          <option value="">Select</option>
+                          <option>Date of Crime</option>
+                          <option>Count(Status)</option>
+                          <option>Type of Crime</option>
+                          <option>Count(Type of Crime)</option>
+                          <option>Count(Vehicle Used)</option>
+                          <option>Count(Landmark)</option>
+                          <option>Count(Gender)</option>
+                          <option>Age</option>
+                          <option>Police Station</option>
+                        </select>
+                      </div>
+
+                      <div class="col-md-6 form-group mb-5">
+                        <label for="" class="col-form-label">Y Axis</label>
+                        <select name="y-axis" class="form-control" >
+                          <option value="">Select</option>
+                          <option>Landmark</option>
+                          <option>Type of Crime</option>
+                          <option>Count(Status)</option>
+                          <option>Number_Of_Person Involved</option>
+                          <option>Time Period of Crime</option>
+                          <option>Count(Number_Of_Person Involved)</option>
+                          <option>Crime Registered</option>
+                          <option>Chain Theft</option>
+                          <option>Robberies</option>
+                        </select>
+                      </div>
+
+                      <div class="col-md-12 form-group m-auto w-auto ">
+                        <input type="submit" value="Submit" class="btn btn-primary rounded-0 py-2 px-4"/>
+                        <span class="submitting"></span>
+                      </div>
+                    </div>
+                  {%elif result == "Type of Crime/Count(Status)"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8f89-bbf1-44e1-8bc0-590df2c40847&maxDataAge=60&theme=light&autoRefresh=true"></iframe> 
+                   </div>
+                  {%elif result == "Count(Status)/Type of Crime"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8f89-bbf1-49e6-870f-590df2c40849&maxDataAge=3600&theme=light&autoRefresh=true"></iframe> </div>
+                  {%elif result == "Count(Landmark)/Time Period of Crime"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8f89-bbf1-4474-8c2b-590df2c4084f&maxDataAge=3600&theme=light&autoRefresh=true"></iframe> </div>
+                  {%elif result == "Count(Type of Crime)/Number_Of_Person Involved"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8f89-bbf1-4bb3-8e7a-590df2c4084b&maxDataAge=3600&theme=light&autoRefresh=true"></iframe></div>
+                  {%elif result == "Date of Crime/Landmark"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8f89-bbf1-420e-8137-590df2c40845&maxDataAge=3600&theme=light&autoRefresh=true"></iframe> </div>
+                  {%elif result == "Count(Vehicle Used)/Number_Of_Person Involved"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8f89-bbf1-46ba-845b-590df2c4084d&maxDataAge=3600&theme=light&autoRefresh=true"></iframe> </div>
+                  {%elif result == "Count(Gender)/Number_Of_Person Involved"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8f89-bbf1-4ac0-87dd-590df2c40851&maxDataAge=3600&theme=light&autoRefresh=true"></iframe> </div>
+                  {%elif result == "Age/Count(Number_Of_Person Involved)"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8f89-bbf1-475e-8e2a-590df2c40853&maxDataAge=3600&theme=light&autoRefresh=true"></iframe> </div>
+                  {%elif result == "Date of Crime/Count(Number_Of_Person Involved)"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8f89-bbf1-46d9-85ec-590df2c40857&maxDataAge=3600&theme=light&autoRefresh=true"></iframe> 
+                  </div>
+                  {%elif result == "Type of Crime/Count(Type of Crime)"%}
+                  <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8c60-bbf1-4c5f-84c2-590df2b8c463&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                   
+                   {%elif result == "Police Station/Robberies"%}
+                   <div class="col-12" style="height:400px;">
+                     <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8f89-bbf1-46d9-85ec-590df2c40857&maxDataAge=3600&theme=light&autoRefresh=true"></iframe> 
+                   </div>
+                   {%elif result == "Police Station/Crime Registered"%}
+                   <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8c60-bbf1-4a99-88f5-590df2b8c46f&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  {%elif result == "Police Station/Chain theft"%}
+                   <div class="col-12" style="height:400px;">
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-zhgnb/embed/charts?id=65ab8c60-bbf1-4a99-88f5-590df2b8c46f&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
+                  </div>
+                  
+
+                  
+                  
+                  
+                    {%else%}
+                    <h4 class="card-title text-danger   ">No Chart Available</h4>
+                    <p class="card-description">Select the values from below dropdown list to display chart</p>
+                    <input type="submit" name="special_btn" value="HOTSPOT1"class="btn  rounded-0 py-2 px-4" />
+                    <input type="submit" name="special_btn" value="HOTSPOT2" class="btn rounded-0 py-2 px-4" />
+                    <input type="submit" name="special_btn" value="HOTSPOT3" class="btn rounded-0 py-2 px-4"/>
+                    <input type="submit" name="special_btn" value="HOTSPOT4" class="btn rounded-0 py-2 px-4"/>
+                    <input type="submit" name="special_btn" value="HOTSPOT5" class="btn rounded-0 py-2 px-4"/>
+
+                    
+                    <div class="row">
+                      <div class="col-md-6 form-group mb-5">
+                        <label for="" class="col-form-label">X Axis</label>
+                        <select name="x-axis" class="form-control" >
+                          <option value="">Select</option>
+                          <option>Date of Crime</option>
+                          <option>Count(Status)</option>
+                          <option>Type of Crime</option>
+                          <option>Count(Type of Crime)</option>
+                          <option>Count(Vehicle Used)</option>
+                          <option>Count(Landmark)</option>
+                          <option>Count(Gender)</option>
+                          <option>Age</option>
+                          <option>Police Station</option>
+                        </select>
+                      </div>
+
+                      <div class="col-md-6 form-group mb-5">
+                        <label for="" class="col-form-label">Y Axis</label>
+                        <select name="y-axis" class="form-control" >
+                          <option value="">Select</option>
+                          <option>Landmark</option>
+                          <option>Type of Crime</option>
+                          <option>Count(Status)</option>
+                          <option>Number_Of_Person Involved</option>
+                          <option>Time Period of Crime</option>
+                          <option>Count(Number_Of_Person Involved)</option>
+                          <option>Crime Registered</option>
+                          <option>Chain Theft</option>
+                          <option>Robberies</option>
+                        </select>
+                      </div>
+
+                      <div class="col-md-12 form-group m-auto w-auto ">
+                        <input type="submit" value="Submit" class="btn btn-primary rounded-0 py-2 px-4"/>
+                        <span class="submitting"></span>
+                      </div>
+                    </div>
+                 
+                    {%endif%}
+
+                </div>
+              </div>
+            </div>
+        </div>
+        
+      </form>
+        <footer class="footer">
+          <div class="container-fluid d-flex justify-content-between">
+            <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © </span>
+            <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
+              Free
+            </span>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- partial -->
+  </div>
+
+  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js'%}"></script>
+
+  <!-- inject:js -->
+  <script src="{% static 'assets/js/off-canvas.js'%}"></script>
+  <script src="{% static 'assets/js/hoverable-collapse.js'%}"></script>
+  <script src="{% static 'assets/js/misc.js'%}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page -->
+  <script src="{% static 'assets/js/file-upload.js'%}"></script>
+  <script src="{% static 'assets/js/myjs.js'%}"></script>
+  <!-- End custom js for this page -->
+</div>
+</body>
+
+</html>
+{%endblock%}

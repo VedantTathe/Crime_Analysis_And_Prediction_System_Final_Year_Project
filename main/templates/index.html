@@ -17,39 +17,13 @@
   <!-- MyStyle css -->
   <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}" />
   <style>
-    {% comment %} @keyframes textAnimation {
-      0% {
-        opacity: 0;
-      }
-      50% {
-        opacity: 1;
-      }
-      100% {
-        opacity: 0;
-      }
-    }
-
-    /* Apply the animation to the text */
-    .animated-text {
-      font-size: 24px;
-      animation: textAnimation 2s ease-in-out infinite; /* Repeat the animation infinitely */
-    }
-
-    /* Center the text */
-    .center {
-      position: absolute;
-      top: 20%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    } {% endcomment %}
+   
     
 .container1 {
   overflow: auto; 
   display: flex;
   scroll-snap-type: x mandatory;
-  {% comment %} /* width: 90%; */
-  /* margin: 0 auto; */
-  /* padding: 0 15px;*/ {% endcomment %}
+  
 }
 
 .card1 {
@@ -58,8 +32,7 @@
   -webkit-backdrop-filter: blur(7px);
   border-radius: 10px;
   padding: 0.5;
-  {% comment %} /* margin: 1rem; */
-  /* width: 100%; */ {% endcomment %}
+  
 }
 
 .container1:hover {
@@ -67,23 +40,14 @@
 }
 
 .title1 {
-  {% comment %} /* width: 100%; */ {% endcomment %}
   display: inline-block;
-  {% comment %} /* word-break: break-all; */
-  /* white-space: nowrap; */ {% endcomment %}
   overflow: hidden;
-  {% comment %} /* text-overflow: ellipsis; */
-  /* text-align: center; */
-  /* margin: 1rem auto; */ {% endcomment %}
 }
 
 .custom-margin{
   font-weight: bolder;
-  {% comment %} /* font-size: larger; */ {% endcomment %}
   color: #292828;
-  {% comment %} /* margin: 20px; */ {% endcomment %}
   border: 2px solid #ec4a4a;
-  {% comment %} /* padding: 10px; */ {% endcomment %}
   background-color: rgb(240, 193, 193);
 }
   </style>
@@ -123,22 +87,18 @@
         <div class="custom-margin p-2 m-2">
           <marquee>Tommorow's Crime Hotspots :- {% for i in request.session.all_hotspots %} <span class="crime_type_for_hotspot {{i.Pincode}}"><strong></strong></span> {{i.Landmark}} &nbsp; {{i.Longitude}} &nbsp;  {{i.Latitude}}&nbsp; {{ i.Pincode|floatformat:0 }} &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; , {%endfor%}</marquee>
         </div>
-        {% comment %} {%elif request.session.model_data%}
-        <div class="animated-text center">
-          Processing...
-        </div> {% endcomment %}
+        
         {%endif%}
         
         <div class="content-wrapper p-3 ">
-          {% comment %} <div>
-            <a class="btn btn-block btn-lg btn-gradient-primary mt-4" href="/predicthotspotcall/">Click Here to predict</a>
-          </div> {% endcomment %}
+
+          
           <div class="page-header">
             <h3 class="page-title">
               <span class="page-title-icon bg-gradient-primary text-white me-2">
                 <i class="mdi mdi-home"></i>
               </span>
-              <a href="/predicthotspot/">Dashboard</a>
+              Dashboard
             </h3>
             <nav aria-label="breadcrumb">
               <ul class="breadcrumb">
@@ -193,38 +153,7 @@
               </div>
             </div>
           </div>
-          {% comment %} <div class="d-flex overflow-scroll">
-            <div class="col-md-7 col-lg-10 grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="clearfix">
-                            <h4 class="card-title float-left">
-                                Crime Registerd and Detected Statistics
-                            </h4>
-                            <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right">
-                                <div class="chart-frame m-auto">
-                                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653a7fac-e89e-4197-8653-87676cc1db48&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-7 col-lg-10 grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Traffic Sources</h4>
-                        <canvas id="traffic-chart"></canvas>
-                        <div id="traffic-chart-legend" class="rounded-legend legend-vertical legend-bottom-left ">
-                            <div class="chart-frame m-auto">
-                                <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="100%" src="https://charts.mongodb.com/charts-project-0-wsfea/embed/charts?id=653bda20-49fd-4d0c-8acd-d0503a641279&maxDataAge=3600&theme=light&autoRefresh=true"></iframe>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-          </div> {% endcomment %}
+          
           <div class="container1 w-100">
             <div class="card1 m-2">
               <p class="chart-frame title1">

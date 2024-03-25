@@ -1,1171 +1,3 @@
-{% comment %} {%load static%} {%block content%}
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <title>CrimeAnalysis</title>
-  <!-- plugins:css -->
-  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css'%}" />
-  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css'%}" />
-  <!-- endinject -->
-  <!-- Layout styles -->
-  <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
-  <!-- End layout styles -->
-  <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico'%}" />
-    <!-- MyStyle css -->
-    <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}" />
-
-
-</head>
-
-<body class="bg-white ">
-  <div class="container-scroller bg-white ">
-      {% include 'components/navbar.html' %}
-
-
-    <!-- partial -->
-    <div class="container-fluid page-body-wrapper" style="height: 100vh">
-      <!-- partial:partials/_sidebar.html -->
-      {% include 'components/sidebar.html' %}
-      <!-- partial -->
-      <div class="main-panel main-div bg-white">
-        {%if msg%}
-        <div class="text-center alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
-          <h3>
-              {{msg}}
-          </h3>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endif %}
-        {%if err%}
-        <div class="text-center alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
-          <h3>
-              {{err}}
-          </h3>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endif %}
-            <div class="content-wrapper d-flex align-items-center auth p-0" style="background-color:white !important;">
-              
-              <div class="row flex-grow bg-white">
-                <div class=" mx-auto bg-white">
-                  <div class="auth-form-light text-left py-1 bg-white ">
-                    
-                    <div class="brand-logo mt-4" style="text-align:center;">
-                      <h1>Select Crime to Update Record</h1>
-    
-                    </div>
-                    <!-- <h6 class="font-weight-light">Signing up is easy. It only takes a few steps</h6> -->
-                    
-                    <div class="col-lg-8 col-10 m-auto">
-                      <form action="/criminaldetail.html/" method="post">{% csrf_token %}
-                        <table class="" style="" id="view_users">
-                          <tr class="" style="border-bottom: 1px solid #36454F;">
-                            <th class="p-2 pe-4 col-2  ">First Name</th>
-                            <th class="p-2 pe-4 col-2  ">Last Name</th>
-                            <th class="p-2 pe-4 col-2  ">Crime</th>                           
-                          </tr>
-                          {% for criminal in criminals_data %}
-                          <tr class="" style="border-bottom: 1px solid #9b9b9b;">
-                              <td class="p-2 pe-4 col-2">{{ criminal.first_name }}</td>
-                              <td class="p-2 pe-4 col-2">{{ criminal.last_name }}</td>
-                              <td class="p-2 pe-4 col-2">
-                                {% for crime_type in criminal.crime_types %}
-                                    <a href="{% url 'main:showupdate' param1=criminal.first_name param2=criminal.last_name param3=crime_type %}">
-                                        {{ crime_type }}<br>
-                                    </a>
-                                {% endfor %}
-                            </td>
-                              
-                          </tr>
-                      {% endfor %}
-
-                        </table>
-                      </form> 
-                    </div>
-                        
-                  </div>
-                </div>
-            <!-- content-wrapper ends -->
-            </div>
-            
-          <!-- page-body-wrapper ends -->
-        </div>
-    
-          
-        
-        <footer class="footer">
-          <div class="container-fluid d-flex justify-content-between">
-            <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © </span>
-            <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
-              Free
-            </span>
-          </div>
-        </footer>
-      </div>
-    </div>
-    <!-- partial -->
-  </div>
-
-
-
-  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js'%}"></script>
-
-  <!-- inject:js -->
-  <script src="{% static 'assets/js/off-canvas.js'%}"></script>
-  <script src="{% static 'assets/js/hoverable-collapse.js'%}"></script>
-  <script src="{% static 'assets/js/misc.js'%}"></script>
-  <!-- endinject -->
-  <!-- Custom js for this page -->
-  <script src="{% static 'assets/js/file-upload.js'%}"></script>
-  <script src="{% static 'assets/js/myjs.js'%}"></script>
-  <!-- End custom js for this page -->
-</div>
-</body>
-
-</html>
-{%endblock%} {% endcomment %}
-
-{% comment %} 
-{% load static %} {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>CrimeAnalysis</title>
-    <!-- plugins:css -->
-    <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css'%}" />
-    <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css'%}" />
-    <!-- endinject -->
-    <!-- Layout styles -->
-    <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
-    <!-- End layout styles -->
-    <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico'%}" />
-    <!-- MyStyle css -->
-    <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}" />
-    <link rel="stylesheet" href="{% static 'assets/css/loader.css'%}" />
-</head>
-
-<body class="bg-white">
-    <div class="loader-container">
-        <div class="loader"></div>
-    </div>
-
-    <div class="container-scroller bg-white ">
-        {% include 'components/navbar.html' %}
-
-        <div class="container-fluid page-body-wrapper" style="height: 100vh">
-            {% include 'components/sidebar.html' %}
-
-            <div class="main-panel main-div bg-white">
-                {% if msg %}
-                <div class="text-center alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
-                    <h3>{{msg}}</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                {% endif %} {% if err %}
-                <div class="text-center alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
-                    <h3>{{err}}</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                {% endif %}
-
-                <div class="content-wrapper d-flex align-items-center auth p-0" style="background-color:white !important;">
-                    <div class="row flex-grow bg-white">
-                        <div class="mx-auto bg-white">
-                            <div class="auth-form-light text-left py-1 bg-white">
-                                <div class="brand-logo mt-4 text-center">
-                                    <h1>Select Crime to Update Record</h1>
-                                </div>
-                                <div class="col-lg-8 col-10 m-auto">
-                                    <form action="/criminaldetail.html/" method="post">
-                                        {% csrf_token %}
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered table-hover table-fixed">
-                                                <thead class="thead-dark">
-                                                    <tr class="bg-dribbble text-black-100 fs-4 mx-auto">
-                                                        <th class="py-3 p-5">FIRST NAME</th>
-                                                        <th class="py-3 p-5">LAST NAME</th>
-                                                        <th class="py-3 p-5">CRIME DETAILS</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="text-center">
-                                                    {% for criminal in criminals_data %}
-                                                    <tr class="{% cycle 'bg-white' 'bg-light' %}">
-                                                        <td>{{ criminal.first_name }}</td>
-                                                        <td>{{ criminal.last_name }}</td>
-                                                        <td class="d-flex flex-wrap text-center">
-                                                            {% for crime_type in criminal.crime_types %}
-                                                            <button class="btn btn-outline-primary btn-sm mb-2 me-4 justify-content-evenly" type="button" data-bs-toggle="modal" data-bs-target="#crimeDetailsModal{{ forloop.counter }}">
-                                                                {{ crime_type }}
-                                                            </button> {% endfor %}
-                                                        </td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <footer class="footer">
-                    <div class="container-fluid d-flex justify-content-between">
-                        <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © </span>
-                        <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
-                            Free
-                        </span>
-                    </div>
-                </footer>
-            </div>
-        </div>
-    </div>
-
-    <script src="{% static 'assets/vendors/js/vendor.bundle.base.js'%}"></script>
-    <script src="{% static 'assets/js/off-canvas.js'%}"></script>
-    <script src="{% static 'assets/js/hoverable-collapse.js'%}"></script>
-    <script src="{% static 'assets/js/misc.js'%}"></script>
-    <script src="{% static 'assets/js/file-upload.js'%}"></script>
-    <script src="{% static 'assets/js/myjs.js'%}"></script>
-    <script src="{% static 'assets/js/loader.js'%}"></script>
-</body>
-
-</html>
-
-{% endblock %} {% endcomment %}
-
-
-{% comment %} {% load static %} 
-
-{% block content %}
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <title>CrimeAnalysis</title>
-  <!-- plugins:css -->
-  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}" />
-  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}" />
-  <!-- endinject -->
-  <!-- Layout styles -->
-  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
-  <link rel="stylesheet" href="{% static 'assets/css/mystyle.css' %}" />
-  <!-- End layout styles -->
-  <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico' %}" />
-  <style>
-    .pagination {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 20px;
-    }
-    
-    .page-circle {
-      display: inline-block;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background-color: #3498db;
-      color: #fff;
-      text-align: center;
-      line-height: 30px;
-      cursor: pointer;
-      margin: 0 5px;
-    }
-    
-    .page-circle.active {
-      background-color: #fff;
-      color: #3498db;
-    }
-    
-    .prev,
-    .next {
-      background-color: #3498db;
-      color: #fff;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    
-    #pageCircles {
-      display: flex;
-      align-items: center;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="container-scroller">
-    {% include 'components/navbar.html' %}
-    <div class="container-fluid page-body-wrapper" style="height: 100vh">
-      {% include 'components/sidebar.html' %}
-      <div class="main-panel main-div ">
-        <div class="content-wrapper">
-          <div class="page-header">
-            <h3 class="page-title"> Criminal Details </h3>
-          </div>
-          <div class="col-12 grid-margin stretch-card">
-            <div class="card">
-              <div class="card-body">
-                
-                <form action="/criminaldetail.html/" method="post">
-                  {% csrf_token %}
-                  
-
-                  <!-- Table to display criminals -->
-                  <div class="table-responsive">
-                    <table class="table table-bordered table-hover table-fixed">
-                      <thead class="thead-dark">
-                        <tr class="bg-dribbble text-black-100 fs-4 mx-auto">
-                          <th class="py-3 p-5">FIRST NAME</th>
-                          <th class="py-3 p-5">LAST NAME</th>
-                          <th class="py-3 p-5">CRIME DETAILS</th>
-                        </tr>
-                      </thead>
-                      <tbody class="text-center">
-                       
-        
-                        {% for criminal in  page_obj%}
-                        <tr class="{% cycle 'bg-white' 'bg-light' %}">
-                          <td>{{ criminal.First_Name }}</td>
-                          <td>{{ criminal.Last_Name }}</td>
-                          <td class="d-flex flex-wrap text-center">
-                            
-                            <a class="btn btn-outline-primary btn-sm mb-2 me-4 justify-content-evenly" href="{% url 'main:showupdate' param1=criminal.First_Name param2=criminal.Last_Name param3=criminal.Type_of_Crime %}">
-                              {{ criminal.Type_of_Crime }}<br>
-                          </a>
-                          </td>
-                        </tr>
-                        {% endfor %}
-                      
-                       
-                      </tbody>
-                    </table>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-       <!-- Pagination -->
-<div class="pagination">
-  {% if page_obj.has_previous %}
-      <a href="?page=1" class="prev">&laquo; First</a>
-      <a href="?page={{ page_obj.previous_page_number }}" class="prev">Previous</a>
-  {% endif %}
-
-  <div id="pageCircles" class="flex-wrap">
-      {% for num in page_obj.paginator.page_range %}
-          <div class="page-circle {% if num == page_obj.number %}active{% endif %}" onclick="changePage({{ num }})">{{ num }}</div>
-      {% endfor %}
-  </div>
-
-  {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}" class="next">Next</a>
-      <a href="?page={{ page_obj.paginator.num_pages }}" class="next">Last &raquo;</a>
-  {% endif %}
-</div>
-<!-- End Pagination -->
-
-        <footer class="footer">
-          <div class="container-fluid d-flex justify-content-between">
-            <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © </span>
-            <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
-              Free
-            </span>
-          </div>
-        </footer>
-      </div>
-    </div>
-    <!-- partial -->
-  </div>
-  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js' %}"></script>
-  <script src="{% static 'assets/js/off-canvas.js' %}"></script>
-  <script src="{% static 'assets/js/hoverable-collapse.js' %}"></script>
-  <script src="{% static 'assets/js/misc.js' %}"></script>
-  <!-- Custom js for this page -->
-  <script src="{% static 'assets/js/file-upload.js' %}"></script>
-  <script>
-    document.getElementById('searchInput').addEventListener('input', function () {
-      var searchTerm = $(this).val();
-  
-      $.ajax({
-        type: "GET",
-        url: "/searchcrimeresult.html/",
-        data: { search_term: searchTerm },
-        success: function (data) {
-          $("#searchCrimeResult").empty();
-          var text = '<form class="form-sample" action="/showupdate_combined/" method="post" id="crime-form">{% csrf_token %}' +
-            '<div class="a">Type of Crime : {{ data.0.crime_types }}</div>' +
-            '<table class="table table-bordered table-hover shadow-sm mt-3">' +
-            '<thead class="thead-dark"><tr>' +
-            '<th>First Name</th><th>Last Name</th>' +
-            '<th>Type of Crime</th><th>Actions</th>' +
-            '</tr></thead>';
-          var count = 0;
-  
-          $.each(data.results, function (index, value) {
-            text += '<tbody><tr>' +
-              '<td>' + value[1].toUpperCase()  + '</td>' +  
-              '<td>' + value[2].toUpperCase()  + '</td>' +
-              '<td>' + value[3].toUpperCase()  + '</td>' +
-              '<td>' +
-              '<a href="showupdate/' + value[1].toUpperCase()  + '/' + value[2].toUpperCase()  + '/' + value[3].toUpperCase() + '">Additional Info</a>' +
-              '</td>' +
-              '</tr></tbody>';
-            count += 1;
-          });
-          
-  
-          text += '</table></form>';
-  
-          $("#searchCrimeResult").append(text);
-  
-          if (count === 0) {
-            $("#searchCrimeResult").html("<p class='text-danger mt-3'>No Matching Result..!</p>");
-          }
-        }
-      });
-    });
-  </script>
-  
-</body>
-
-</html>
-
-{% endblock %} {% endcomment %}
-
-{% comment %} {%load static%} {%block content%}
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <title>CrimeAnalysis</title>
-  <!-- plugins:css -->
-  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css'%}" />
-  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css'%}" />
-  <!-- endinject -->
-  <!-- Layout styles -->
-  <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
-  <!-- End layout styles -->
-  <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico'%}" />
-    <!-- MyStyle css -->
-    <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}" />
-
-
-</head>
-
-<body class="bg-white ">
-  <div class="container-scroller bg-white ">
-      {% include 'components/navbar.html' %}
-
-
-    <!-- partial -->
-    <div class="container-fluid page-body-wrapper" style="height: 100vh">
-      <!-- partial:partials/_sidebar.html -->
-      {% include 'components/sidebar.html' %}
-      <!-- partial -->
-      <div class="main-panel main-div bg-white">
-        {%if msg%}
-        <div class="text-center alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
-          <h3>
-              {{msg}}
-          </h3>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endif %}
-        {%if err%}
-        <div class="text-center alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
-          <h3>
-              {{err}}
-          </h3>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endif %}
-            <div class="content-wrapper d-flex align-items-center auth p-0" style="background-color:white !important;">
-              
-              <div class="row flex-grow bg-white">
-                <div class=" mx-auto bg-white">
-                  <div class="auth-form-light text-left py-1 bg-white ">
-                    
-                    <div class="brand-logo mt-4" style="text-align:center;">
-                      <h1>Select Crime to Update Record</h1>
-    
-                    </div>
-                    <!-- <h6 class="font-weight-light">Signing up is easy. It only takes a few steps</h6> -->
-                    
-                    <div class="col-lg-8 col-10 m-auto">
-                      <form action="/criminaldetail.html/" method="post">{% csrf_token %}
-                        <table class="" style="" id="view_users">
-                          <tr class="" style="border-bottom: 1px solid #36454F;">
-                            <th class="p-2 pe-4 col-2  ">First Name</th>
-                            <th class="p-2 pe-4 col-2  ">Last Name</th>
-                            <th class="p-2 pe-4 col-2  ">Crime</th>                           
-                          </tr>
-                          {% for criminal in criminals_data %}
-                          <tr class="" style="border-bottom: 1px solid #9b9b9b;">
-                              <td class="p-2 pe-4 col-2">{{ criminal.first_name }}</td>
-                              <td class="p-2 pe-4 col-2">{{ criminal.last_name }}</td>
-                              <td class="p-2 pe-4 col-2">
-                                {% for crime_type in criminal.crime_types %}
-                                    <a href="{% url 'main:showupdate' param1=criminal.first_name param2=criminal.last_name param3=crime_type %}">
-                                        {{ crime_type }}<br>
-                                    </a>
-                                {% endfor %}
-                            </td>
-                              
-                          </tr>
-                      {% endfor %}
-
-                        </table>
-                      </form> 
-                    </div>
-                        
-                  </div>
-                </div>
-            <!-- content-wrapper ends -->
-            </div>
-            
-          <!-- page-body-wrapper ends -->
-        </div>
-    
-          
-        
-        <footer class="footer">
-          <div class="container-fluid d-flex justify-content-between">
-            <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © </span>
-            <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
-              Free
-            </span>
-          </div>
-        </footer>
-      </div>
-    </div>
-    <!-- partial -->
-  </div>
-
-
-
-  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js'%}"></script>
-
-  <!-- inject:js -->
-  <script src="{% static 'assets/js/off-canvas.js'%}"></script>
-  <script src="{% static 'assets/js/hoverable-collapse.js'%}"></script>
-  <script src="{% static 'assets/js/misc.js'%}"></script>
-  <!-- endinject -->
-  <!-- Custom js for this page -->
-  <script src="{% static 'assets/js/file-upload.js'%}"></script>
-  <script src="{% static 'assets/js/myjs.js'%}"></script>
-  <!-- End custom js for this page -->
-</div>
-</body>
-
-</html>
-{%endblock%} {% endcomment %}
-
-{% comment %} 
-{% load static %} {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>CrimeAnalysis</title>
-    <!-- plugins:css -->
-    <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css'%}" />
-    <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css'%}" />
-    <!-- endinject -->
-    <!-- Layout styles -->
-    <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
-    <!-- End layout styles -->
-    <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico'%}" />
-    <!-- MyStyle css -->
-    <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}" />
-    <link rel="stylesheet" href="{% static 'assets/css/loader.css'%}" />
-</head>
-
-<body class="bg-white">
-    <div class="loader-container">
-        <div class="loader"></div>
-    </div>
-
-    <div class="container-scroller bg-white ">
-        {% include 'components/navbar.html' %}
-
-        <div class="container-fluid page-body-wrapper" style="height: 100vh">
-            {% include 'components/sidebar.html' %}
-
-            <div class="main-panel main-div bg-white">
-                {% if msg %}
-                <div class="text-center alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
-                    <h3>{{msg}}</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                {% endif %} {% if err %}
-                <div class="text-center alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
-                    <h3>{{err}}</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                {% endif %}
-
-                <div class="content-wrapper d-flex align-items-center auth p-0" style="background-color:white !important;">
-                    <div class="row flex-grow bg-white">
-                        <div class="mx-auto bg-white">
-                            <div class="auth-form-light text-left py-1 bg-white">
-                                <div class="brand-logo mt-4 text-center">
-                                    <h1>Select Crime to Update Record</h1>
-                                </div>
-                                <div class="col-lg-8 col-10 m-auto">
-                                    <form action="/criminaldetail.html/" method="post">
-                                        {% csrf_token %}
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered table-hover table-fixed">
-                                                <thead class="thead-dark">
-                                                    <tr class="bg-dribbble text-black-100 fs-4 mx-auto">
-                                                        <th class="py-3 p-5">FIRST NAME</th>
-                                                        <th class="py-3 p-5">LAST NAME</th>
-                                                        <th class="py-3 p-5">CRIME DETAILS</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="text-center">
-                                                    {% for criminal in criminals_data %}
-                                                    <tr class="{% cycle 'bg-white' 'bg-light' %}">
-                                                        <td>{{ criminal.first_name }}</td>
-                                                        <td>{{ criminal.last_name }}</td>
-                                                        <td class="d-flex flex-wrap text-center">
-                                                            {% for crime_type in criminal.crime_types %}
-                                                            <button class="btn btn-outline-primary btn-sm mb-2 me-4 justify-content-evenly" type="button" data-bs-toggle="modal" data-bs-target="#crimeDetailsModal{{ forloop.counter }}">
-                                                                {{ crime_type }}
-                                                            </button> {% endfor %}
-                                                        </td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <footer class="footer">
-                    <div class="container-fluid d-flex justify-content-between">
-                        <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © </span>
-                        <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
-                            Free
-                        </span>
-                    </div>
-                </footer>
-            </div>
-        </div>
-    </div>
-
-    <script src="{% static 'assets/vendors/js/vendor.bundle.base.js'%}"></script>
-    <script src="{% static 'assets/js/off-canvas.js'%}"></script>
-    <script src="{% static 'assets/js/hoverable-collapse.js'%}"></script>
-    <script src="{% static 'assets/js/misc.js'%}"></script>
-    <script src="{% static 'assets/js/file-upload.js'%}"></script>
-    <script src="{% static 'assets/js/myjs.js'%}"></script>
-    <script src="{% static 'assets/js/loader.js'%}"></script>
-</body>
-
-</html>
-
-{% endblock %} {% endcomment %}
-
-
-{% comment %} {% load static %} 
-
-{% block content %}
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <title>CrimeAnalysis</title>
-  <!-- plugins:css -->
-  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}" />
-  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}" />
-  <!-- endinject -->
-  <!-- Layout styles -->
-  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
-  <link rel="stylesheet" href="{% static 'assets/css/mystyle.css' %}" />
-  <!-- End layout styles -->
-  <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico' %}" />
-  <style>
-    .pagination {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 20px;
-    }
-    
-    .page-circle {
-      display: inline-block;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background-color: #3498db;
-      color: #fff;
-      text-align: center;
-      line-height: 30px;
-      cursor: pointer;
-      margin: 0 5px;
-    }
-    
-    .page-circle.active {
-      background-color: #fff;
-      color: #3498db;
-    }
-    
-    .prev,
-    .next {
-      background-color: #3498db;
-      color: #fff;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    
-    #pageCircles {
-      display: flex;
-      align-items: center;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="container-scroller">
-    {% include 'components/navbar.html' %}
-    <div class="container-fluid page-body-wrapper" style="height: 100vh">
-      {% include 'components/sidebar.html' %}
-      <div class="main-panel main-div ">
-        <div class="content-wrapper">
-          <div class="page-header">
-            <h3 class="page-title"> Criminal Details </h3>
-          </div>
-          <div class="col-12 grid-margin stretch-card">
-            <div class="card">
-              <div class="card-body">
-              
-                <form action="/criminaldetail.html/" method="post">
-                  {% csrf_token %}
-                  
-
-                  <!-- Table to display criminals -->
-                  <div class="table-responsive">
-                    <table class="table table-bordered table-hover table-fixed">
-                      <thead class="thead-dark">
-                        <tr class="bg-dribbble text-black-100 fs-4 mx-auto">
-                          <th class="py-3 p-5">FIRST NAME</th>
-                          <th class="py-3 p-5">LAST NAME</th>
-                          <th class="py-3 p-5">CRIME DETAILS</th>
-                        </tr>
-                      </thead>
-                      <tbody class="text-center">
-                       
-        
-                        {% for criminal in  page_obj%}
-                        <tr class="{% cycle 'bg-white' 'bg-light' %}">
-                          <td>{{ criminal.first_name }}</td>
-                          <td>{{ criminal.last_name }}</td>
-                          <td class="d-flex flex-wrap text-center">
-                             {% for crime_type in criminal.crime_types %}
-                                <a class="btn btn-outline-primary btn-sm mb-2 me-4 justify-content-evenly" href="{% url 'main:showupdate' param1=criminal.first_name param2=criminal.last_name param3=crime_type %}">
-                                    {{ crime_type }}<br>
-                                </a>
-                            {% endfor %}
-                        
-                          </td>
-                        </tr>
-                        {% endfor %}
-                      
-                       
-                      </tbody>
-                    </table>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-   
-
-<div class="pagination">
-  {% if page_obj.has_previous %}
-      <a href="?page=1" class="prev">&laquo; First</a>
-      <a href="?page={{ page_obj.previous_page_number }}" class="prev">Previous</a>
-  {% endif %}
-
-  <div id="pageCircles" class="flex-wrap">
-    {% for num in page_obj.paginator.page_range %}
-    {% if num == 1 or num == page_obj.paginator.num_pages %}
-        <a href="?page={{ num }}" class="page-circle {% if num == page_obj.number %}active{% endif %}" onclick="changePage({{ num }})">{{ num }}</a>
-    {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
-        <a href="?page={{ num }}" class="page-circle" onclick="changePage({{ num }})">{{ num }}</a>
-    {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
-        <div class="page-circle">...</div>
-    {% endif %}
-{% endfor %}
-
-
-
-  </div>
-
-  {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}" class="next">Next</a>
-      <a href="?page={{ page_obj.paginator.num_pages }}" class="next">Last &raquo;</a>
-  {% endif %}
-</div>
-
-
-
-
-
-
-
-
-
-        <footer class="footer">
-          <div class="container-fluid d-flex justify-content-between">
-            <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © </span>
-            <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
-              Free
-            </span>
-          </div>
-        </footer>
-      </div>
-    </div>
-    <!-- partial -->
-  </div>
-  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js' %}"></script>
-  <script src="{% static 'assets/js/off-canvas.js' %}"></script>
-  <script src="{% static 'assets/js/hoverable-collapse.js' %}"></script>
-  <script src="{% static 'assets/js/misc.js' %}"></script>
-  <!-- Custom js for this page -->
-  <script src="{% static 'assets/js/file-upload.js' %}"></script>
-  <script>
-    document.getElementById('searchInput').addEventListener('input', function () {
-      var searchTerm = $(this).val();
-  
-      $.ajax({
-        type: "GET",
-        url: "/searchcrimeresult.html/",
-        data: { search_term: searchTerm },
-        success: function (data) {
-          $("#searchCrimeResult").empty();
-          var text = '<form class="form-sample" action="/showupdate_combined/" method="post" id="crime-form">{% csrf_token %}' +
-            '<div class="a">Type of Crime : {{ data.0.crime_types }}</div>' +
-            '<table class="table table-bordered table-hover shadow-sm mt-3">' +
-            '<thead class="thead-dark"><tr>' +
-            '<th>First Name</th><th>Last Name</th>' +
-            '<th>Type of Crime</th><th>Actions</th>' +
-            '</tr></thead>';
-          var count = 0;
-  
-          $.each(data.results, function (index, value) {
-            text += '<tbody><tr>' +
-              '<td>' + value[1].toUpperCase()  + '</td>' +  
-              '<td>' + value[2].toUpperCase()  + '</td>' +
-              '<td>' + value[3].toUpperCase()  + '</td>' +
-              '<td>' +
-              '<a href="showupdate/' + value[1].toUpperCase()  + '/' + value[2].toUpperCase()  + '/' + value[3].toUpperCase() + '">Additional Info</a>' +
-              '</td>' +
-              '</tr></tbody>';
-            count += 1;
-          });
-          
-  
-          text += '</table></form>';
-  
-          $("#searchCrimeResult").append(text);
-  
-          if (count === 0) {
-            $("#searchCrimeResult").html("<p class='text-danger mt-3'>No Matching Result..!</p>");
-          }
-        }
-      });
-    });
-  </script>
-  
-</body>
-
-</html>
-
-{% endblock %} {% endcomment %}
-
-
-{% comment %} {%load static%} {%block content%}
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <title>CrimeAnalysis</title>
-  <!-- plugins:css -->
-  <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css'%}" />
-  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css'%}" />
-  <!-- endinject -->
-  <!-- Layout styles -->
-  <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
-  <!-- End layout styles -->
-  <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico'%}" />
-    <!-- MyStyle css -->
-    <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}" />
-
-
-</head>
-
-<body class="bg-white ">
-  <div class="container-scroller bg-white ">
-      {% include 'components/navbar.html' %}
-
-
-    <!-- partial -->
-    <div class="container-fluid page-body-wrapper" style="height: 100vh">
-      <!-- partial:partials/_sidebar.html -->
-      {% include 'components/sidebar.html' %}
-      <!-- partial -->
-      <div class="main-panel main-div bg-white">
-        {%if msg%}
-        <div class="text-center alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
-          <h3>
-              {{msg}}
-          </h3>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endif %}
-        {%if err%}
-        <div class="text-center alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
-          <h3>
-              {{err}}
-          </h3>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endif %}
-            <div class="content-wrapper d-flex align-items-center auth p-0" style="background-color:white !important;">
-              
-              <div class="row flex-grow bg-white">
-                <div class=" mx-auto bg-white">
-                  <div class="auth-form-light text-left py-1 bg-white ">
-                    
-                    <div class="brand-logo mt-4" style="text-align:center;">
-                      <h1>Select Crime to Update Record</h1>
-    
-                    </div>
-                    <!-- <h6 class="font-weight-light">Signing up is easy. It only takes a few steps</h6> -->
-                    
-                    <div class="col-lg-8 col-10 m-auto">
-                      <form action="/criminaldetail.html/" method="post">{% csrf_token %}
-                        <table class="" style="" id="view_users">
-                          <tr class="" style="border-bottom: 1px solid #36454F;">
-                            <th class="p-2 pe-4 col-2  ">First Name</th>
-                            <th class="p-2 pe-4 col-2  ">Last Name</th>
-                            <th class="p-2 pe-4 col-2  ">Crime</th>                           
-                          </tr>
-                          {% for criminal in criminals_data %}
-                          <tr class="" style="border-bottom: 1px solid #9b9b9b;">
-                              <td class="p-2 pe-4 col-2">{{ criminal.first_name }}</td>
-                              <td class="p-2 pe-4 col-2">{{ criminal.last_name }}</td>
-                              <td class="p-2 pe-4 col-2">
-                                {% for crime_type in criminal.crime_types %}
-                                    <a href="{% url 'main:showupdate' param1=criminal.first_name param2=criminal.last_name param3=crime_type %}">
-                                        {{ crime_type }}<br>
-                                    </a>
-                                {% endfor %}
-                            </td>
-                              
-                          </tr>
-                      {% endfor %}
-
-                        </table>
-                      </form> 
-                    </div>
-                        
-                  </div>
-                </div>
-            <!-- content-wrapper ends -->
-            </div>
-            
-          <!-- page-body-wrapper ends -->
-        </div>
-    
-          
-        
-        <footer class="footer">
-          <div class="container-fluid d-flex justify-content-between">
-            <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © </span>
-            <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
-              Free
-            </span>
-          </div>
-        </footer>
-      </div>
-    </div>
-    <!-- partial -->
-  </div>
-
-
-
-  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js'%}"></script>
-
-  <!-- inject:js -->
-  <script src="{% static 'assets/js/off-canvas.js'%}"></script>
-  <script src="{% static 'assets/js/hoverable-collapse.js'%}"></script>
-  <script src="{% static 'assets/js/misc.js'%}"></script>
-  <!-- endinject -->
-  <!-- Custom js for this page -->
-  <script src="{% static 'assets/js/file-upload.js'%}"></script>
-  <script src="{% static 'assets/js/myjs.js'%}"></script>
-  <!-- End custom js for this page -->
-</div>
-</body>
-
-</html>
-{%endblock%} {% endcomment %}
-
-{% comment %} 
-{% load static %} {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>CrimeAnalysis</title>
-    <!-- plugins:css -->
-    <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css'%}" />
-    <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css'%}" />
-    <!-- endinject -->
-    <!-- Layout styles -->
-    <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
-    <!-- End layout styles -->
-    <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico'%}" />
-    <!-- MyStyle css -->
-    <link rel="stylesheet" href="{% static 'assets/css/mystyle.css'%}" />
-    <link rel="stylesheet" href="{% static 'assets/css/loader.css'%}" />
-</head>
-
-<body class="bg-white">
-    <div class="loader-container">
-        <div class="loader"></div>
-    </div>
-
-    <div class="container-scroller bg-white ">
-        {% include 'components/navbar.html' %}
-
-        <div class="container-fluid page-body-wrapper" style="height: 100vh">
-            {% include 'components/sidebar.html' %}
-
-            <div class="main-panel main-div bg-white">
-                {% if msg %}
-                <div class="text-center alert alert-success alert-dismissible fade show m-0 shadow ps-5" role="alert">
-                    <h3>{{msg}}</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                {% endif %} {% if err %}
-                <div class="text-center alert alert-danger alert-dismissible fade show m-0 shadow ps-5" role="alert">
-                    <h3>{{err}}</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                {% endif %}
-
-                <div class="content-wrapper d-flex align-items-center auth p-0" style="background-color:white !important;">
-                    <div class="row flex-grow bg-white">
-                        <div class="mx-auto bg-white">
-                            <div class="auth-form-light text-left py-1 bg-white">
-                                <div class="brand-logo mt-4 text-center">
-                                    <h1>Select Crime to Update Record</h1>
-                                </div>
-                                <div class="col-lg-8 col-10 m-auto">
-                                    <form action="/criminaldetail.html/" method="post">
-                                        {% csrf_token %}
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered table-hover table-fixed">
-                                                <thead class="thead-dark">
-                                                    <tr class="bg-dribbble text-black-100 fs-4 mx-auto">
-                                                        <th class="py-3 p-5">FIRST NAME</th>
-                                                        <th class="py-3 p-5">LAST NAME</th>
-                                                        <th class="py-3 p-5">CRIME DETAILS</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="text-center">
-                                                    {% for criminal in criminals_data %}
-                                                    <tr class="{% cycle 'bg-white' 'bg-light' %}">
-                                                        <td>{{ criminal.first_name }}</td>
-                                                        <td>{{ criminal.last_name }}</td>
-                                                        <td class="d-flex flex-wrap text-center">
-                                                            {% for crime_type in criminal.crime_types %}
-                                                            <button class="btn btn-outline-primary btn-sm mb-2 me-4 justify-content-evenly" type="button" data-bs-toggle="modal" data-bs-target="#crimeDetailsModal{{ forloop.counter }}">
-                                                                {{ crime_type }}
-                                                            </button> {% endfor %}
-                                                        </td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <footer class="footer">
-                    <div class="container-fluid d-flex justify-content-between">
-                        <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © </span>
-                        <span class="float-none float-sm-end mt-1 mt-sm-0 text-end">
-                            Free
-                        </span>
-                    </div>
-                </footer>
-            </div>
-        </div>
-    </div>
-
-    <script src="{% static 'assets/vendors/js/vendor.bundle.base.js'%}"></script>
-    <script src="{% static 'assets/js/off-canvas.js'%}"></script>
-    <script src="{% static 'assets/js/hoverable-collapse.js'%}"></script>
-    <script src="{% static 'assets/js/misc.js'%}"></script>
-    <script src="{% static 'assets/js/file-upload.js'%}"></script>
-    <script src="{% static 'assets/js/myjs.js'%}"></script>
-    <script src="{% static 'assets/js/loader.js'%}"></script>
-</body>
-
-</html>
-
-{% endblock %} {% endcomment %}
-
-
 {% load static %} 
 
 {% block content %}
@@ -1227,6 +59,14 @@
       display: flex;
       align-items: center;
     }
+    tr{
+      background-color: #ced4da !important;
+    }
+    #policeStationDropdown {
+  border: 1px solid #555;
+  border-radius: 5px;
+  color: black;
+}
   </style>
 </head>
 
@@ -1237,13 +77,13 @@
       {% include 'components/sidebar.html' %}
       <div class="main-panel main-div ">
         <div class="content-wrapper d-flex align-items-center auth p-0" style="background-color:white !important;">
-          <div class="row flex-grow bg-white">
+          <div class="row flex-grow bg-white" >
               <div class="mx-auto bg-white">
                   <div class="auth-form-light text-left py-1 bg-white">
                       <div class="brand-logo mt-4 text-center">
-                          <h1>Select Crime to Update Record</h1>
+                          <h1>CRIMINALS RECORDS</h1>
                       </div>
-                      <div class="col-lg-8 col-10 m-auto">
+                      <div class="col-lg-10 col-10 m-auto">
                           <form action="/criminaldetail.html/" method="post">
                               {% csrf_token %}
                               {% if selected_station %}
@@ -1251,31 +91,54 @@
                               {% endif %}
 
                               
-                              <div class="form-group mx-sm-3 mb-2 col-8">
-                                  <label for="searchInput" class="sr-only">Search Term:</label>
-                                  <input type="text" class="form-control" id="searchInput" name="searchInput" placeholder="Enter search term" required>
-                              </div>
-                              <div class="form-group mb-2">
-                                <label for="policeStationDropdown">Select Police Station:</label>
-                                <select class="form-control" id="policeStationDropdown" name="policeStationDropdown">
+                              <div class="row">
+                                <div class="form-group mx-sm-3 mb-2 col-8">
+                                  <label for="searchInput" class="sr-only" style="font-size: 15px; ">Search Term:</label>
+                                  <input style="border: 1px solid #000; border-radius: 5px; color: #000;" type="text" class="form-control" id="searchInput" name="searchInput" placeholder="Enter search term" required>
+                                </div>
+                                <div class="form-group mb-4 col">
+                                  <label for="policeStationDropdown" style="font-size: 15px;">Select Police Station:</label>
+                                  <select class="form-control" id="policeStationDropdown" name="policeStationDropdown">
                                     <option value="">-- Select Police Station --</option>
-                                    {% for station in police_stations %}
-                                        <option value="{{ station }}">{{ station }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
+                                    <option value="all">All_Records</option>
+                                    {% comment %} {% for station in police_stations %}
+                                      <option value="{{ station }}">{{ station }}</option>
+                                    {% endfor %} {% endcomment %}
+                                    <option value="BHOSARI">BHOSARI</option>
+                                    <option value="BHOSARI MIDC">BHOSARI MIDC</option>
+                                    <option value="CHIKHALI">CHIKHALI</option>
+                                    <option value="PIMPRI">PIMPRI</option>
+                                    <option value="CHINCHWAD">CHINCHWAD</option>
+                                    <option value="NIGADI">NIGADI</option>
+                                    <option value="CHAKAN">CHAKAN</option>
+                                    <option value="ALANDI">ALANDI</option>
+                                    <option value="DIGHI">DIGHI</option>
+                                    <option value="MHALUNGE">MHALUNGE</option>
+                                    <option value="SANGHI">SANGHI</option>
+                                    <option value="WAKAD">WAKAD</option>
+                                    <option value="HINJEWADI">HINJEWADI</option>
+                                    <option value="RAVET">RAVET</option>
+                                    <option value="DEHUROAD">DEHUROAD</option>
+                                    <option value="TALEGAON DABHADE">TALEGAON DABHADE</option>
+                                    <option value="SHIRGAON">SHIRGAON</option>
+                                    <option value="TALEGAON MIDC">TALEGAON MIDC</option>
+                                  </select>
+                                </div>
+                              </div>
+                              
                             
 
                           </form>
                           <!-- This div will be populated with search suggestions -->
                           <div id="suggestions"></div>
                           <!-- Table to display criminals -->
-                          <div class="table-responsive">
+                          <div class="table-responsive" id="searchCrimeResult_Hide">
                               <table class="table table-bordered table-hover table-fixed">
-                                  <thead class="thead-dark">
-                                      <tr class="bg-dribbble text-black-100 fs-4 mx-auto">
+                                  <thead class="thead-light">
+                                      <tr class=" bg-dribbble text-black-100 fs-4 mx-auto">
                                           <th class="py-3 p-5">FIRST NAME</th>
                                           <th class="py-3 p-5">LAST NAME</th>
+                                          <th class="py-3 p-5">POLICE STATION</th>
                                           <th class="py-3 p-5">CRIME DETAILS</th>
                                       </tr>
                                   </thead>
@@ -1284,9 +147,10 @@
                                       <tr class="{% cycle 'bg-white' 'bg-light' %}">
                                           <td>{{ criminal.first_name }}</td>
                                           <td>{{ criminal.last_name }}</td>
+                                          <td>{{ criminal.police_station }}</td>
                                           <td class="d-flex flex-wrap text-center">
                                               {% for crime_type in criminal.crime_types %}
-                                              <a class="btn btn-outline-primary btn-sm mb-2 me-4 justify-content-evenly" href="{% url 'main:showupdate' param1=criminal.first_name param2=criminal.last_name param3=crime_type %}">
+                                              <a class="btn btn-outline-info btn-sm mb-2 me-4 justify-content-evenly" href="{% url 'main:showupdate' param1=criminal.first_name param2=criminal.last_name param3=crime_type %}">
                                                   {{ crime_type }}<br>
                                               </a>
                                               {% endfor %}
@@ -1296,6 +160,8 @@
                                   </tbody>
                               </table>
                           </div>
+                          <div class="table-responsive" style="display:none;" id="searchCrimeResult">
+                          </div>
                       </div>
                   </div>
               </div>
@@ -1303,7 +169,7 @@
       </div>
       
       <!-- Pagination -->
-      <div class="pagination">
+      <div class="pagination" id="pagination">
           {% if page_obj.has_previous %}
           <a href="?page=1" class="prev">&laquo; First</a>
           <a href="?page={{ page_obj.previous_page_number }}" class="prev">Previous</a>
@@ -1331,63 +197,20 @@
   <script src="{% static 'assets/js/misc.js' %}"></script>
   <!-- Custom js for this page -->
   <script src="{% static 'assets/js/file-upload.js' %}"></script>
-      {% comment %} <script>
-          // Function to handle input change
-          function handleInputChange() {
-              var searchTerm = $(this).val().trim();
-              if (searchTerm.length > 0) { // Only send request if the search term is not empty
-                  sendSearchRequest(searchTerm);
-              } else {
-                  $('#suggestions').empty(); // Clear suggestions if input is empty
-              }
-          }
       
-          // Function to send search request
-          function sendSearchRequest(searchTerm) {
-              $.ajax({
-                  type: "GET",
-                  url: "/searchcrimeresult.html/",
-                  data: { search_term: searchTerm },
-                  success: function (data) {
-                      displaySearchResults(data);
-                  },
-                  error: function () {
-                      // Handle error
-                      console.error('Error fetching search results.');
-                  }
-              });
-          }
-      
-          // Function to display search results
-          function displaySearchResults(data) {
-              var suggestionsDiv = $('#suggestions');
-              suggestionsDiv.empty();
-      
-              if (data.results.length === 0) {
-                  suggestionsDiv.html("<p>No suggestions found.</p>");
-                  return;
-              }
-      
-              // Display suggestions
-              var suggestionList = '<ul>';
-              $.each(data.results, function (index, value) {
-                  suggestionList += '<li>' + value.suggestion + '</li>';
-              });
-              suggestionList += '</ul>';
-              suggestionsDiv.html(suggestionList);
-          }
-      
-          // Attach event listener to input field
-          $(document).ready(function () {
-              $('#searchInput').on('input', handleInputChange);
-          });
-      </script> {% endcomment %}
+  
       <script>
 
   $(document).ready(function () {
     $("#searchInput").on("input", function () {
       var searchTerm = $(this).val();
-
+      searchterm = searchTerm.trim();
+      if(searchTerm.length === 0)
+      {
+        $("#suggestions").html("");
+      }
+      else
+      {
       {% comment %} if (document.getElementById('fir-submit').style.display == "none") { {% endcomment %}
         $.ajax({
           type: "GET",
@@ -1421,13 +244,30 @@
             text += '</table></form>';
 
             $("#searchCrimeResult").append(text);
+            
+            document.getElementById("searchCrimeResult").style.display="block";
+            document.getElementById("searchCrimeResult_Hide").style.display="none";
+            document.getElementById("pagination").style.display="none";
 
             if (count === 0) {
-              $("#searchCrimeResult").html("<p class='text-danger mt-3'>No Matching Result..!</p>");
+              $("#suggestions").html("<p class='text-danger mt-3'>No Matching Result..!</p>");
+              
+              document.getElementById("pagination").style.display="block";
+              document.getElementById("searchCrimeResult_Hide").style.display="block";
             }
+            else{
+              console.log(searchTerm)
+              if(searchTerm === " " || searchTerm === ""){
+
+              }else{
+              $("#suggestions").html("");
+              }
+            }
+  
+              
           }
         });
-      {% comment %} } {% endcomment %}
+      } 
     });
   });
 </script>
@@ -1437,7 +277,7 @@
                 var selectedStation = $(this).val();
                 if (selectedStation) {
                     // Redirect to the desired webpage
-                    window.location.href = '/samplepage.html';
+                    {% comment %} window.location.href = '/samplepage.html'; {% endcomment %}
                 }
             });
         });

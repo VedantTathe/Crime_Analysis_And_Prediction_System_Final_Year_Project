@@ -62,51 +62,7 @@
                     </div>
                     <!-- <h6 class="font-weight-light">Signing up is easy. It only takes a few steps</h6> -->
                     
-                    {% comment %} <div class="col-lg-8 col-10 m-auto">
-                        <table class="" style="" id="view_users">
-                          <tr class="" style="border-bottom: 1px solid #36454F;">
-                            <th class="p-2 pe-4 col-2  ">Username</th>
-                            <th class="p-2 pe-4 col-2  ">Email</th>
-                            <th class="p-2 pe-4 col-2  ">Password</th>
-                            <th class="p-2 pe-4 col-2  ">Status</th>
-                            <th class="p-2 pe-4 col-2  ">Type</th>  
-                            <th class="p-2 pe-4 col-2  ">Update</th>                           
-                          </tr>
-                          {% for user in data_list %}
-                          
-                          <form action="" method="post">{% csrf_token %}
-                            <tr class="" style="border-bottom: 1px solid #9b9b9b;">
-                              <td class="p-2 pe-4 col-2  ">{{ user.Username }}</td>
-                              <td class="p-2 pe-4 col-2  ">{{ user.Email }}</td>
-                              <td class="p-2 pe-4 col-2  ">{{ user.Password }}</td>
-                              {%if user.Status == 'Activated'%}
-                              <td class="p-2 me-4 col-2">
-                                <button name="deactivate_{{ user.Username }}" class="btn bg-danger  mb-2 w-100 text-white  " style="background-color: #fb3030;  color: white;"   type="submit" {%if user.Username == request.session.user%}disabled{%endif%}>Deactivate</button>
-                              </td>
-                              {%elif user.Status == 'Deactivated'%}
-                              <td class="p-2 me-4 col-2">
-                                <button name="activate_{{ user.Username }}" class="btn bg-success  mb-2 w-100 text-white  " type="submit">Activate</button>
-                              </td>{%endif%}
-
-                              {%if user.utype == 'admin'%}
-                              <td class="p-2 me-4 col-2">
-                                <button name="admin_{{ user.Username }}" class="btn mb-2 w-100 text-white" style="background-color: grey;  color: white;" type="submit" {%if user.Username == request.session.user%}disabled{%endif%}>Make Normal</button>
-                              {%elif user.utype == 'normal'%}
-                              <td class="p-2 me-4 col-2">
-                               <button name="normal_{{ user.Username }}" class="btn  mb-2 w-100 text-white " style="background-color: #81dedb;" type="submit">Make Admin</button>
-                              </td>{%endif%}
-                              
-                              <td class="p-2 me-4 col-2">
-                                    <a class="btn mb-2 w-100 text-white" style="background-color: #ffa927; color: white;" style="text-decoration:none; color:white;" href="/updateuser.html?uname={{user.Username}}">Update</a>
-                              </td>
-                                                      
-                          
-                            </tr>
-                          </form>
-                          {% endfor %}
-                                  
-                        </table>
-                    </div> {% endcomment %}
+                    
                     <div class="container">
                       <!-- <h2 class="text-center mb-4">User Management</h2> -->
                       <table class="table table-bordered table-striped text-dark">

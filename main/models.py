@@ -138,46 +138,6 @@ class CrimeOperations:
             stat['err'] = 'Oops! Something went wrong'
         # print("stat"+stat)
         return stat
-    
-    # def criminals_list(self):
-    #     stat = {'err': None, 'criminals_list': []}
-    #     try:
-    #         print("In model.py Criminals List")
-
-    #         #client = MongoClient("mongodb+srv://pratham:swisshy@prathamclus.l5pmia2.mongodb.net/?retryWrites=true&w=majority")
-    #         # client = MongoClient("mongodb+srv://tanmayshambharkar22:tanmay@cluster0.sptyi.mongodb.net/?retryWrites=true&w=majority")
-    #         client = MongoClient("mongodb+srv://vedant:vedant@cluster0.3glbf3u.mongodb.net/?retryWrites=true&w=majority")
-    #         # client=MongoClient("mongodb://localhost:27017/")
-    #         db = client['Crime']
-    #         collection = db['CrimeDetails']
-
-    #          # Specify the fields to retrieve in the projection
-    #         projection = {'First_Name': 1, 'Last_Name': 1, 'Type_of_Crime': 1, 'FIR_No':1}
-
-    #         # Fetch criminals list from MongoDB with the specified projection
-    #         criminals = collection.find({}, projection)
-
-    #         # Now 'criminals' contains a cursor with the data. You can convert it to a list if needed.
-    #         criminals_list = list(criminals)
-    #         # print("Criminals List:", criminals_list)
-
-    #         # You may want to pass the 'criminals_list' to your template context
-    #         stat['criminals_list'] = criminals_list
-    #         #stat['criminals_list'] = criminals
-
-
-    #     except ConnectionFailure as err:
-    #         print("Connection Failure:", str(err))
-    #         stat['err'] = 'ConnectionFailure: Unable to connect to the MongoDB server. Please check your connection settings.'
-
-    #     except Exception as err:
-    #         print("Exception in model.py:", str(err))
-    #         stat['err'] = 'Oops! Something went wrong'
-
-    #     finally:
-    #         client.close()  # Close the MongoDB client
-
-    #     return stat
 
     def criminals_list(self):
         stat = {'err': None, 'criminals_list': []}
@@ -248,48 +208,6 @@ class CrimeOperations:
 
         return stat
     
-    # def crimesearch(self, key1, key2, key3):
-        stat = {'err': None}
-        dic = {}
-        data = []
-
-        try:
-            # Connect to MongoDB
-            #client = MongoClient("mongodb+srv://pratham:swisshy@prathamclus.l5pmia2.mongodb.net/?retryWrites=true&w=majority")
-            client = MongoClient("mongodb+srv://tanmayshambharkar22:tanmay@cluster0.sptyi.mongodb.net/?retryWrites=true&w=majority")
-            
-            # Select the database and collection
-            db = client["Crime"]
-            coll = db["CrimeDetails"]
-
-            # Construct the query
-            query = {"First_Name": key1, "Last_Name": key2, "Type_of_Crime": key3}
-
-            # Find documents matching the query
-            cursor = coll.find(query)
-
-            # Iterate through the matching documents and add them to the data list
-            for document in cursor:
-                data.append(document)
-
-            # Print the data (for debugging purposes)
-            print("Data:", data)
-
-            if not data:
-                # If no documents match the query, return a message
-                stat['err'] = "No matching documents found"
-            else:
-                # Return the data
-                stat['data'] = data
-
-            return stat
-
-        except Exception as e:
-            print("Exception in search: " + str(e))
-            stat['err'] = "An error occurred during the search."
-        
-        return stat
-
     def crimesearch(self, key1, key2, key3):
         stat = {'err': None}
         dic = {}
@@ -304,6 +222,9 @@ class CrimeOperations:
             # Select the database and collection
             db = client["Crime"]
             coll = db["CrimeDetails"]
+            print("Here inthe search")
+            print(key1,key2,key3)
+            print("============")
 
             # Construct the query
             query = {"First_Name": key1, "Last_Name": key2, "Type_of_Crime": key3}
@@ -601,7 +522,8 @@ class CrimeOperations:
     def getpolicestation(self):
         stat = {'err': None, 'criminals_list': []}
         try:
-            print("In the model of statrus")
+            print("In model.py Criminals List")
+
             #client = MongoClient("mongodb+srv://pratham:swisshy@prathamclus.l5pmia2.mongodb.net/?retryWrites=true&w=majority")
             # client = MongoClient("mongodb+srv://tanmayshambharkar22:tanmay@cluster0.sptyi.mongodb.net/?retryWrites=true&w=majority")
             client = MongoClient("mongodb+srv://vedant:vedant@cluster0.3glbf3u.mongodb.net/?retryWrites=true&w=majority")
@@ -640,7 +562,8 @@ class CrimeOperations:
     def criminals_list_as_per_police_station(self, selected_station):
         stat = {'err': None, 'criminals_list': []}
         try:
-            print("In the model of statrus")
+            print("In model.py Criminals List")
+
             #client = MongoClient("mongodb+srv://pratham:swisshy@prathamclus.l5pmia2.mongodb.net/?retryWrites=true&w=majority")
             # client = MongoClient("mongodb+srv://tanmayshambharkar22:tanmay@cluster0.sptyi.mongodb.net/?retryWrites=true&w=majority")
             client = MongoClient("mongodb+srv://vedant:vedant@cluster0.3glbf3u.mongodb.net/?retryWrites=true&w=majority")
@@ -675,9 +598,10 @@ class CrimeOperations:
             client.close()  # Close the MongoDB client
 
         return stat
-            
+
 class UserOperations:
-    def register(self,fname,lname, uname, email, pswd):
+    
+    def register(self,fname,lname, uname, email, pswd, policestation):
         stat = {}
         try:
             print("hello")
@@ -694,6 +618,7 @@ class UserOperations:
             dic['Username'] = uname
             dic['Email'] = email
             dic['Password'] = pswd
+            dic['Police_Station'] = policestation
             # dic['Country'] = country
             dic['Date'] = cdate
             dic['Status'] = 'Activated'
@@ -712,6 +637,7 @@ class UserOperations:
             stat['err'] = 'Oops! Something went wrong'
         return stat
         
+    
     def login(self, uname, pswd):
         stat = {
             'msg':None,
@@ -737,6 +663,7 @@ class UserOperations:
                 if existing_user['Status'] == "Activated":
                     stat['msg'] = 'Login successful'
                     stat['fname'] = existing_user['FName']
+                    stat['policestation'] = existing_user['Police_Station']
                 else:
                     stat['err'] = 'Account is Deactivated'
                     print(stat)
@@ -750,6 +677,44 @@ class UserOperations:
             stat['err'] = 'Oops! Something went wrong'
 
         return stat
+    
+    
+    def updateUserData(self, uname, email, password, policestation):
+        stat = {}
+        stat['err'] = None
+        stat['msg'] = None
+
+        try:
+            #client = MongoClient("mongodb+srv://pratham:swisshy@prathamclus.l5pmia2.mongodb.net/?retryWrites=true&w=majority")
+            # client = MongoClient("mongodb+srv://tanmayshambharkar22:tanmay@cluster0.sptyi.mongodb.net/?retryWrites=true&w=majority")
+            client = MongoClient("mongodb+srv://vedant:vedant@cluster0.3glbf3u.mongodb.net/?retryWrites=true&w=majority")
+            # client=MongoClient("mongodb://localhost:27017/")
+            db = client["Crime"]
+            coll = db["UserDetails"]
+
+            query = {'Username': uname}
+            update_data = {'$set': {'Email': email, 'Password': password,'Police_Station':policestation}}
+
+            print("Query:", query)
+            print("Update Data:", update_data)
+
+            result = coll.update_one(query, update_data)
+
+            print("Matched Count:", result.matched_count)
+
+            if result.matched_count > 0:
+                stat['msg'] = "User Updated Successfully"
+            else:
+                stat['err'] = "User not found or status already updated"
+
+        except Exception as err:
+            print("Exception: " + str(err))
+            stat['err'] = 'Oops! Something went wrong'
+        finally:
+            client.close()  # Close the MongoDB client
+
+        return stat
+
     
     def userdata_list(request):
         stat = {'err':None}
@@ -860,42 +825,7 @@ class UserOperations:
 
         return stat
  
-    def updateUserData(self, uname, email, password):
-        stat = {}
-        stat['err'] = None
-        stat['msg'] = None
-
-        try:
-            #client = MongoClient("mongodb+srv://pratham:swisshy@prathamclus.l5pmia2.mongodb.net/?retryWrites=true&w=majority")
-            # client = MongoClient("mongodb+srv://tanmayshambharkar22:tanmay@cluster0.sptyi.mongodb.net/?retryWrites=true&w=majority")
-            client = MongoClient("mongodb+srv://vedant:vedant@cluster0.3glbf3u.mongodb.net/?retryWrites=true&w=majority")
-            # client=MongoClient("mongodb://localhost:27017/")
-            db = client["Crime"]
-            coll = db["UserDetails"]
-
-            query = {'Username': uname}
-            update_data = {'$set': {'Email': email, 'Password': password}}
-
-            print("Query:", query)
-            print("Update Data:", update_data)
-
-            result = coll.update_one(query, update_data)
-
-            print("Matched Count:", result.matched_count)
-
-            if result.matched_count > 0:
-                stat['msg'] = "User Updated Successfully"
-            else:
-                stat['err'] = "User not found or status already updated"
-
-        except Exception as err:
-            print("Exception: " + str(err))
-            stat['err'] = 'Oops! Something went wrong'
-        finally:
-            client.close()  # Close the MongoDB client
-
-        return stat
-
+  
     def checkType(self, name):
         default_utype = None
         # client = None

@@ -26,13 +26,9 @@ from collections import Counter
 import threading
 from datetime import datetime, timedelta
 from django.core.paginator import Paginator
-
-# import numpy as np
-# import pandas as pd
-# from sklearn.model_selection import train_test_split
-# from sklearn.preprocessing import StandardScaler
-# from tensorflow.keras.models import Sequential
-# from tensorflow.keras.layers import Dense
+from django.views.decorators.csrf import csrf_exempt
+from .forms import FormWithCaptcha
+from django.shortcuts import render, redirect
 
 
 
@@ -377,258 +373,17 @@ def readDescriptionFromVoice(request):
     stat.update(xo)
     return stat
 
-def trainModelForHotspotsPrediction(request):
-    #     !pip install pymongo
-    # !pip install pandas
-    # # !pip install joblib
-    # import pymongo
-    # import pandas as pd
-    # from sklearn.model_selection import train_test_split
-    # from sklearn.ensemble import RandomForestRegressor
-    # from sklearn.metrics import mean_squared_error
-    # from sklearn.preprocessing import LabelEncoder
-    # from sklearn.impute import SimpleImputer
-    # import numpy as np
-    # from sklearn.externals import joblib
+    # Function to get tomorrow's date components
 
-    # Connect to MongoDB
-    # client = pymongo.MongoClient("mongodb+srv://tathevedant70:VedantMadhav@cluster0.30s18ki.mongodb.net/?retryWrites=true&w=majority")
-    client = pymongo.MongoClient("mongodb+srv://vedant:vedant@cluster0.3glbf3u.mongodb.net/?retryWrites=true&w=majority")
-    #client = pymongo.MongoClient("mongodb+srv://pratham:swisshy@prathamclus.l5pmia2.mongodb.net/?retryWrites=true&w=majority")
-    print("started training")
-    # client = pymongo.MongoClient("mongodb+srv://tanmayshambharkar22:tanmay@cluster0.sptyi.mongodb.net/?retryWrites=true&w=majority")
-            
-    # Retrieve data from MongoDB
-    db = client.Crime
-    collection = db.CrimeDetails
-    cursor = collection.find()
-
-    # data = []
-    # for doc in cursor:
-    #     data.append(doc)
-
-    data = list(cursor)
-
-    # Convert MongoDB cursor to Pandas DataFrame
-    columns_to_select = ['Type_of_Crime', 'Pincode', 'Landmark', 'Date_of_Crime', 'Time_Period_of_Crime', 'Latitude', 'Longitude']
-    df = pd.DataFrame(data, columns=columns_to_select)
-
-    # Handle missing values
-    df = df.replace(['', 'Select', 'SELECT', None], np.NAN)
-    imputer = SimpleImputer(strategy='mean')
-
-    print(df[['Latitude', 'Longitude', 'Pincode']])
-    
-    df[['Latitude', 'Longitude', 'Pincode']] = imputer.fit_transform(df[['Latitude', 'Longitude', 'Pincode']])
-    df[['Pincode']] = df[['Pincode']].astype(int)
-
-    # Convert date and time columns to datetime objects
-    # df['Timestamp'] = pd.to_datetime(df['Date_of_Crime'] + ' ' + df['Time_Period_of_Crime'])
-    df['Date_of_Crime'] = pd.to_datetime(df['Date_of_Crime'])
-
-    df['Day_of_Week'] = df['Date_of_Crime'].dt.dayofweek
-    df['Year'] = df['Date_of_Crime'].dt.year
-    df['Month'] = df['Date_of_Crime'].dt.month
-    df['Week'] = df['Date_of_Crime'].dt.isocalendar().week
-    df[['Crime_Start_Time', 'Crime_End_Time']] = df['Time_Period_of_Crime'].str.split('-', expand=True)
-    df[['Crime_Start_Hour','x']] = df['Crime_Start_Time'].str.split(':', expand=True)
-    df[['Crime_End_Hour','y']] = df['Crime_End_Time'].str.split(':', expand=True)
-    df.drop(['Crime_Start_Time', 'Crime_End_Time','x','y','Time_Period_of_Crime','Date_of_Crime'], axis=1, inplace=True)
-
-    # Identify NaN values along columns
-    # nan_columns = df.columns[df.isna().any()].tolist()
-    # inf_columns = [col for col in df.columns if np.any(np.isinf(pd.to_numeric(df[col], errors='coerce')))]
-    # print("Columns with NaN:", nan_columns)
-    # print("Columns with infinity:", inf_columns)
-
-    # Convert categorical variables to numerical using Label Encoding
-    # label_encoder = LabelEncoder()
-    # mytoclist = ['Pocket Theft','Chain Theft','Bicycle Theft','Two-wheeler Theft','Four-wheeler Theft','Other Vehicle Theft','Vehicle Parts Theft','Other Theft','Commercial Robbery','Technical Robbery','Preparing to Robbery','Other Robbery','Daytime Burglary','Night Burglary','Culpable Homicide','Forcible Theft','Rape','Murder','Attempt to Murder','Betrayal','Riot','Injury','Molestation','Gambling','Prohibition','Other']
-    # toc_df = pd.DataFrame(mytoclist, columns=['Type_of_Crime'])
-    # x = label_encoder.fit_transform(toc_df['Type_of_Crime'])
-    # print(x)
-
-
-    label_encoder = LabelEncoder()
-    df['Type_of_Crime'] = label_encoder.fit_transform(df['Type_of_Crime'])
-    df['Landmark'] = label_encoder.fit_transform(df['Landmark'])
-
-    # Handle missing values for Type_of_Crime and Landmark
-    imputer = SimpleImputer(strategy='mean')
-    df[['Type_of_Crime', 'Landmark']] = imputer.fit_transform(df[['Type_of_Crime', 'Landmark']])
-    df[['Landmark','Type_of_Crime']] = df[['Landmark','Type_of_Crime']].astype(int)
-
-    X = df[['Day_of_Week', 'Week', 'Month', 'Year', 'Type_of_Crime', 'Crime_Start_Hour', 'Crime_End_Hour']]
-    y_longitude = df[['Longitude']]
-    y_latitude = df[['Latitude']]
-    y_pincode = df[['Pincode']]
-    y_landmark = df[['Landmark']]
-
-    X_train, X_test, y_longitude_train, y_longitude_test, y_latitude_train, y_latitude_test, y_landmark_train, y_landmark_test, y_pincode_train, y_pincode_test = train_test_split(
-        X, y_longitude, y_latitude, y_landmark, y_pincode, test_size=0.2, random_state=42
-    )
-
-    y_longitude_train = y_longitude_train.values.ravel()
-    y_latitude_train = y_latitude_train.values.ravel()
-    y_pincode_train = y_pincode_train.values.ravel()
-    y_landmark_train = y_landmark_train.values.ravel()
-
-
-    # Choose a machine learning model (Random Forest Regressor)
-    model_longitude = RandomForestRegressor()
-    model_latitude = RandomForestRegressor()
-    model_landmark = RandomForestRegressor()
-    model_pincode = RandomForestRegressor()
-
-    model_longitude.fit(X_train, y_longitude_train)
-    model_latitude.fit(X_train, y_latitude_train)
-    model_pincode.fit(X_train, y_pincode_train)
-    model_landmark.fit(X_train, y_landmark_train)
-
-    label_encoder_data = {
-    'classes_': label_encoder.classes_.tolist(),
-    # Add any other necessary information
-    }
-
-    # Extract relevant information from the DataFrame
-    model_data = {
-        'X_test': X_test.to_dict(orient='records'),  # Convert X_test DataFrame to a list of dictionaries
-        'y_longitude_test': y_longitude_test.to_dict(orient='records'),
-        'y_latitude_test': y_latitude_test.to_dict(orient='records'),
-        'y_landmark_test': y_landmark_test.to_dict(orient='records'),
-        'y_pincode_test': y_pincode_test.to_dict(orient='records'),
-        'label_encoder': label_encoder_data,
-    }
-
-    # Set the variables in the session
-    request.session['model_data'] = model_data
-
-    # Save the trained models to files
-    joblib.dump(model_longitude, 'C:/CrimeAnalysis_ML/model_longitude.pkl')
-    joblib.dump(model_latitude, 'C:/CrimeAnalysis_ML/model_latitude.pkl')
-    joblib.dump(model_pincode, 'C:/CrimeAnalysis_ML/model_pincode.pkl')
-    joblib.dump(model_landmark, 'C:/CrimeAnalysis_ML/model_landmark.pkl')
-    print("training completed")
-
-def predictHotspots(request,dow,week,month,year,toc,csh,ceh):
-    # Load the models from files when needed
-    print("prediction started")
-    loaded_model_longitude = joblib.load('C:/CrimeAnalysis_ML/model_longitude.pkl')
-    loaded_model_latitude = joblib.load('C:/CrimeAnalysis_ML/model_latitude.pkl')
-    loaded_model_pincode = joblib.load('C:/CrimeAnalysis_ML/model_pincode.pkl')
-    loaded_model_landmark = joblib.load('C:/CrimeAnalysis_ML/model_landmark.pkl')
-
-    model_data = request.session.get('model_data')
-
-    if not model_data:
-        print('Model data not found. Please train the models first.')
-        trainModelForHotspotsPrediction(request)
-        
-        loaded_model_longitude = joblib.load('C:/CrimeAnalysis_ML/model_longitude.pkl')
-        loaded_model_latitude = joblib.load('C:/CrimeAnalysis_ML/model_latitude.pkl')
-        loaded_model_pincode = joblib.load('C:/CrimeAnalysis_ML/model_pincode.pkl')
-        loaded_model_landmark = joblib.load('C:/CrimeAnalysis_ML/model_landmark.pkl')
-        # return {'probabilities': None}
-
-    # Convert the list of dictionaries back to DataFrames
-    X_test = pd.DataFrame(model_data['X_test'])
-    y_longitude_test = pd.DataFrame(model_data['y_longitude_test'])
-    y_latitude_test = pd.DataFrame(model_data['y_latitude_test'])
-    y_landmark_test = pd.DataFrame(model_data['y_landmark_test'])
-    y_pincode_test = pd.DataFrame(model_data['y_pincode_test'])
- 
-    label_encoder_data = model_data['label_encoder']
-    label_encoder = LabelEncoder()
-    label_encoder.classes_ = np.array(label_encoder_data['classes_'])
-
-
-    # Make predictions using the loaded models
-    # predictions_longitude_loaded = loaded_model_longitude.predict(X_test)
-    # predictions_latitude_loaded = loaded_model_latitude.predict(X_test)
-    # predictions_pincode_loaded = loaded_model_pincode.predict(X_test)
-    # predictions_landmark_loaded = loaded_model_landmark.predict(X_test)
-
-    # Replace the following values with your own data
-    custom_data = {
-    'Day_of_Week': [dow],
-    'Week': [week],
-    'Month': [month],
-    'Year': [year],
-    'Type_of_Crime': [toc],
-    'Crime_Start_Hour': [csh],
-    'Crime_End_Hour': [ceh]
-    }
-
-
-    # Create a DataFrame with your custom data
-    custom_df = pd.DataFrame(custom_data)
-
-    # print(custom_df)
-
-    # Ensure that the columns in custom_df match the columns used during training
-    # Add any necessary preprocessing steps here to align with the training data
-
-    # Make predictions using the loaded models
-    predictions_longitude_loaded = loaded_model_longitude.predict(custom_df)
-    predictions_latitude_loaded = loaded_model_latitude.predict(custom_df)
-    predictions_pincode_loaded = loaded_model_pincode.predict(custom_df)
-    predictions_landmark_loaded = loaded_model_landmark.predict(custom_df)
-
-    #   Reshape predictions to match the shape of the test data
-    # predictions_longitude_loaded = predictions_longitude_loaded.reshape(-1, 1)
-    # predictions_latitude_loaded = predictions_latitude_loaded.reshape(-1, 1)
-    # predictions_pincode_loaded = predictions_pincode_loaded.reshape(-1, 1)
-    # predictions_landmark_loaded = predictions_landmark_loaded.reshape(-1, 1)
-
-    # print(predictions_longitude_loaded)
-    # print(predictions_latitude_loaded)
-    # print(predictions_pincode_loaded)
-    # print(predictions_landmark_loaded)
-
-
-    predictions_longitude_decoded = predictions_longitude_loaded
-    predictions_latitude_decoded = predictions_latitude_loaded
-    predictions_pincode_decoded = predictions_pincode_loaded
-    predictions_landmark_decoded = label_encoder.inverse_transform(predictions_landmark_loaded.astype(int))
-
-
-    # Print or use the decoded predictions
-    # print("Decoded Landmark Predictions:", predictions_landmark_decoded)
-    # print("Decoded Longitude Predictions:", predictions_longitude_decoded)
-    # print("Decoded Latitude Predictions:", predictions_latitude_decoded)
-    # print("Decoded Pincode Predictions:", predictions_pincode_decoded)
-    print("prediction completed")
-
-    return([predictions_landmark_decoded,predictions_longitude_decoded,predictions_latitude_decoded,predictions_pincode_decoded,csh,ceh])
-
-
-def getTomorrowData(mydate):
-    # Get tomorrow's date
-    tomorrow_date = mydate
-
-    # Extract components
-    day_of_week = tomorrow_date.weekday()  # 0 = Monday, 1 = Tuesday, ..., 6 = Sunday
-    week_number = tomorrow_date.isocalendar()[1]  # ISO week number
+def get_tomorrow_data(my_date):
+    tomorrow_date = my_date + timedelta(days=1)
+    day_of_week = tomorrow_date.weekday()
+    week_number = tomorrow_date.isocalendar()[1]
     month = tomorrow_date.month
     year = tomorrow_date.year
+    return [day_of_week, week_number, month, year]
 
-    # Print the results
-    print(f"Day of the week: {day_of_week}")
-    print(f"Week number: {week_number}")
-    print(f"Month: {month}")
-    print(f"Year: {year}")
-
-    mylist = [day_of_week, week_number, month, year]
-    return mylist
-
-
-
-
-
-
-
-
-
+@csrf_exempt
 def index(request):
     # print(request.session.get('all_hotspots'))
 
@@ -639,10 +394,12 @@ def index(request):
 
         #check type of user
         name = request.session.get('user')
+        # policestation = request.session.get('policestation')
         v = UserOperations()
         utype = v.checkType(name)
         request.session['utype'] = utype
         print(request.session.get('user'))
+        print(request.session.get('policestation'))
         print(utype)
 
         
@@ -670,8 +427,10 @@ def index(request):
         
         return render(request, "index.html/",dic)
     else:
-        return render(request, "login.html/",{'err':'Please Login First...!'})
+        form = FormWithCaptcha()
+        return render(request, "login.html/",{'form':form,'err':'Please Login First...!'})
 
+@csrf_exempt    
 def welcomeMsg(request):
     if 'user' in request.session:
         
@@ -696,133 +455,343 @@ def welcomeMsg(request):
         
         return render(request, "index.html/")
     else:
-        return render(request, "login.html/",{'err':'Please Login First...!'})
+        form = FormWithCaptcha()
+        return render(request, "login.html/",{'form':form,'err':'Please Login First...!'})
 
-def predicthotspot(request):
-    if 'user' in request.session:
-        trainModelForHotspotsPrediction(request)
-        dic={}
-        try:
-            mydate = datetime.now() + timedelta(days=1)
-            mylist = getTomorrowData(mydate)
-            predictions_list = []
-            all_hotspots = []
+def predictHotspotsLatest(request):
+    response_data = {}
+
+    # Connect to MongoDB
+    client = pymongo.MongoClient("mongodb+srv://vedant:vedant@cluster0.3glbf3u.mongodb.net/?retryWrites=true&w=majority")
+
+    print("Training started")
+
+    # Retrieve data from MongoDB
+    db = client.Crime
+    collection = db.CrimeDetails
+    cursor = collection.find()
+
+    data = list(cursor)
+
+    # Convert MongoDB cursor to Pandas DataFrame
+    columns_to_select = ['Type_of_Crime', 'Pincode', 'Landmark', 'Date_of_Crime', 'Time_Period_of_Crime', 'Latitude', 'Longitude']
+    df = pd.DataFrame(data, columns=columns_to_select)
+
+    # Handle missing values
+    df.replace(['', 'Select', 'SELECT', None], np.nan, inplace=True)
+    imputer = SimpleImputer(strategy='mean')
+    df[['Latitude', 'Longitude', 'Pincode']] = imputer.fit_transform(df[['Latitude', 'Longitude', 'Pincode']])
+    df[['Pincode']] = df[['Pincode']].astype(int)
+
+    # Convert date and time columns to datetime objects
+    df['Date_of_Crime'] = pd.to_datetime(df['Date_of_Crime'])
+    df['Day_of_Week'] = df['Date_of_Crime'].dt.dayofweek
+    df['Year'] = df['Date_of_Crime'].dt.year
+    df['Month'] = df['Date_of_Crime'].dt.month
+    df['Week'] = df['Date_of_Crime'].dt.isocalendar().week
+    df[['Crime_Start_Time', 'Crime_End_Time']] = df['Time_Period_of_Crime'].str.split('-', expand=True)
+    df[['Crime_Start_Hour','x']] = df['Crime_Start_Time'].str.split(':', expand=True)
+    df[['Crime_End_Hour','y']] = df['Crime_End_Time'].str.split(':', expand=True)
+    df.drop(['Crime_Start_Time', 'Crime_End_Time','x','y','Time_Period_of_Crime','Date_of_Crime'], axis=1, inplace=True)
+
+    # Convert categorical variables to numerical using Label Encoding
+    label_encoder = LabelEncoder()
+    df['Type_of_Crime'] = label_encoder.fit_transform(df['Type_of_Crime'])
+    df['Landmark'] = label_encoder.fit_transform(df['Landmark'])
+
+    # Handle missing values for Type_of_Crime and Landmark
+    imputer = SimpleImputer(strategy='mean')
+    df[['Type_of_Crime', 'Landmark']] = imputer.fit_transform(df[['Type_of_Crime', 'Landmark']])
+    df[['Landmark','Type_of_Crime']] = df[['Landmark','Type_of_Crime']].astype(int)
+
+    # Prepare features and targets
+    X = df[['Day_of_Week', 'Week', 'Month', 'Year', 'Type_of_Crime', 'Crime_Start_Hour', 'Crime_End_Hour']]
+    y_longitude = df[['Longitude']]
+    y_latitude = df[['Latitude']]
+    y_pincode = df[['Pincode']]
+    y_landmark = df[['Landmark']]
+
+    # Split data into training and testing sets
+    X_train, X_test, y_longitude_train, y_longitude_test, y_latitude_train, y_latitude_test, y_landmark_train, y_landmark_test, y_pincode_train, y_pincode_test = train_test_split(
+        X, y_longitude, y_latitude, y_landmark, y_pincode, test_size=0.2, random_state=42
+    )
+
+    # Choose a machine learning model (Random Forest Regressor)
+    model_longitude = RandomForestRegressor()
+    model_latitude = RandomForestRegressor()
+    model_landmark = RandomForestRegressor()
+    model_pincode = RandomForestRegressor()
+
+    # Train the models
+    model_longitude.fit(X_train, y_longitude_train.values.ravel())
+    model_latitude.fit(X_train, y_latitude_train.values.ravel())
+    model_pincode.fit(X_train, y_pincode_train.values.ravel())
+    model_landmark.fit(X_train, y_landmark_train.values.ravel())
+
     
-            mytoclist_mapped={ "Pocket Theft": 18, "Chain Theft": 3, "Bicycle Theft": 2, "Two-wheeler Theft": 24, "Four-wheeler Theft": 8, "Other Vehicle Theft": 17, "Vehicle Parts Theft": 25, "Other Theft": 16, "Commercial Robbery": 4, "Technical Robbery": 23, "Preparing to Robbery": 19, "Other Robbery": 15, "Daytime Burglary": 6, "Night Burglary": 13, "Culpable Homicide": 5, "Forcible Theft": 7, "Rape": 21, "Murder": 12, "Attempt to Murder": 0, "Betrayal": 1, "Riot": 22, "Injury": 10, "Molestation": 11, "Gambling": 9, "Prohibition": 20, "Other": 14 }
-            timeperiod={0:2,2:4,4:6,6:8,8:10,10:12,12:14,14:16,16:18,18:20,20:22,22:24}
-           
-            for crime, value in mytoclist_mapped.items():
-                print(f"************* CRIME = {crime} *******************")
-                for s, e in timeperiod.items():
-                    # print(f"------Time = {s}-{e} ----------")
-                    predictionlist = predictHotspots(request, mylist[0], mylist[1], mylist[2], mylist[3], value, s, e)
-                    predictions_list.append(predictionlist)
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+    static_dir = os.path.join(BASE_DIR, 'main', 'static', 'assets', 'Crime_Analysis_ML')
+
+    # Check if the static directory exists, if not, create it
+    if not os.path.exists(static_dir):
+        os.makedirs(static_dir)
+
     
-            # max_probability = 0  # Initialize before the inner loop
-            # for crime, value in mytoclist_mapped.items():
-            #     print(f"************* CRIME = {crime} *******************")
-            #     for s, e in timeperiod.items():
-            #         print(f"------Time = {s}-{e} ----------")
-            #         predictions = predictHotspots(request, mylist[0], mylist[1], mylist[2], mylist[3], value, s, e)
-            #         # Check if predictions are None
-            #         if predictions['probabilities'] is not None:
-            #             predictions_probabilities = predictions['probabilities']
-            #             # Find the index with the maximum probability
-            #             max_prob_index = np.argmax(predictions_probabilities)
-            #             # Get the maximum probability for the current time period
-            #             max_probability_for_time = predictions_probabilities[max_prob_index]
-            #             # Check if the current time period has a higher probability
-            #             if max_probability_for_time > max_probability:
-            #                 max_probability = max_probability_for_time
-            #                 most_probable_time = (s, e)
-            #     print("Most Probable Time Period:", most_probable_time)
-            #     print("Max Probability:", max_probability)
+    model_longitude_path = os.path.join(static_dir, 'model_longitude.pkl')
+    model_latitude_path = os.path.join(static_dir, 'model_latitude.pkl')
+    model_pincode_path = os.path.join(static_dir, 'model_pincode.pkl')
+    model_landmark_path = os.path.join(static_dir, 'model_landmark.pkl')
 
-            # dic={'msg':'Your Task Completed Please Check the'}
-            # print(predictions_list)
+    joblib.dump(model_longitude, model_longitude_path)
+    joblib.dump(model_latitude, model_latitude_path)
+    joblib.dump(model_pincode, model_pincode_path)
+    joblib.dump(model_landmark, model_landmark_path)
 
-                def extract_landmark_info(landmark_data):
-                    return (
-                        landmark_data[0][0],
-                        float(landmark_data[1][0]),
-                        float(landmark_data[2][0]),
-                        float(landmark_data[3][0])
-                    )
+    # Save the trained models to files
+    # joblib.dump(model_longitude, 'model_longitude.pkl')
+    # joblib.dump(model_latitude, 'model_latitude.pkl')
+    # joblib.dump(model_pincode, 'model_pincode.pkl')
+    # joblib.dump(model_landmark, 'model_landmark.pkl')
 
-                # Extracting landmark information for each entry in the list
-                landmark_info_list = [extract_landmark_info(landmark) for landmark in predictions_list]
+    print("Training completed")
 
-                # Counting occurrences of each unique combination
-                landmark_counter = Counter(landmark_info_list)
-
-                # Finding the most common combination
-                most_common_landmark = landmark_counter.most_common(1)[0][0]
-
-                print("Most Common Landmark:")
-                print("Landmark:", most_common_landmark[0])
-                print("Longitude:", most_common_landmark[1])
-                print("Latitude:", most_common_landmark[2])
-                print("Pincode:", most_common_landmark[3])
-                print("Count:", landmark_counter[most_common_landmark])
-
-                all_hotspotsdic = {}
-                all_hotspotsdic['Landmark'] =  most_common_landmark[0]
-                all_hotspotsdic['Longitude'] = most_common_landmark[1]
-                all_hotspotsdic['Latitude'] = most_common_landmark[2]
-                all_hotspotsdic['Pincode'] = most_common_landmark[3]
-                all_hotspotsdic['Crime'] = crime
-                
-                all_hotspots.append(all_hotspotsdic)
-                
-            # request.session['all_hotspots'] = all_hotspots
-
-
-            # all_hotspotsex = set(all_hotspots)
-            # print(all_hotspots)
-            
-            
-            def get_unique_key(d):
-                return (d['Longitude'], d['Latitude'], d['Pincode'])
-
-            # Use a set to keep track of unique keys
-            unique_keys = set()
-
-            # List to store unique dictionaries
-            unique_dicts = []
-
-            for d in all_hotspots:
-                key = get_unique_key(d)
-                if key not in unique_keys:
-                    unique_keys.add(key)
-                    unique_dicts.append(d)
-
-            print(unique_dicts)
-            request.session['all_hotspots'] = unique_dicts
-
-
-            dic['msg'] = "Please double-check the results, as they may not be accurate every time. \nKeep in mind that predictions might vary."
-            print(dic)
-            speak("Your Task Completed. Please Check the Results")
-                
-        except Exception as ex:
-            print("Exception: ",str(ex))
-                        
-        return render(request, "index.html/",dic)
-    else:
-        return render(request, "login.html/",{'err':'Please Login First...!'})
-
-def predicthotspotcall(request):
-    training_thread = threading.Thread(target=trainModelForHotspotsPrediction, args=(request,))
-    training_thread.start()
-
-    training_thread.join()
     
-    predict_tread = threading.Thread(target=predicthotspot, args=(request,))
-    predict_tread.start()
 
-    return render(request, "index.html/",{'msg':'Success, Training the model... It will take some time, till you can explore other features'})
+    # Function to make predictions for hotspots
+    def predict_hotspots(day_of_week, week, month, year, toc, csh, ceh):
+        print("Prediction Started")
+        # loaded_model_longitude = joblib.load('model_longitude.pkl')
+        # loaded_model_latitude = joblib.load('model_latitude.pkl')
+        # loaded_model_pincode = joblib.load('model_pincode.pkl')
+        # loaded_model_landmark = joblib.load('model_landmark.pkl')
+        
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+        static_dir = os.path.join(BASE_DIR, 'main', 'static', 'assets', 'Crime_Analysis_ML')
+
+        model_longitude_path = os.path.join(static_dir, 'model_longitude.pkl')
+        model_latitude_path = os.path.join(static_dir, 'model_latitude.pkl')
+        model_pincode_path = os.path.join(static_dir, 'model_pincode.pkl')
+        model_landmark_path = os.path.join(static_dir, 'model_landmark.pkl')
+
+        loaded_model_longitude = joblib.load(model_longitude_path)
+        loaded_model_latitude = joblib.load(model_latitude_path)
+        loaded_model_pincode = joblib.load(model_pincode_path)
+        loaded_model_landmark = joblib.load(model_landmark_path)
+
+        custom_data = {
+            'Day_of_Week': [day_of_week],
+            'Week': [week],
+            'Month': [month],
+            'Year': [year],
+            'Type_of_Crime': [toc],
+            'Crime_Start_Hour': [csh],
+            'Crime_End_Hour': [ceh]
+        }
+
+        custom_df = pd.DataFrame(custom_data)
+
+        predictions_longitude = loaded_model_longitude.predict(custom_df)
+        predictions_latitude = loaded_model_latitude.predict(custom_df)
+        predictions_pincode = loaded_model_pincode.predict(custom_df)
+        predictions_landmark = loaded_model_landmark.predict(custom_df)
+        predictions_landmark = label_encoder.inverse_transform(predictions_landmark.astype(int))
+
+        print("Prediction Completed")
+        return [predictions_landmark, predictions_longitude, predictions_latitude, predictions_pincode, csh, ceh]
+
+    print("start")
+    # Get tomorrow's date components
+    my_date = datetime.now()
+    my_list = get_tomorrow_data(my_date)
+    predictions_list = []
+    all_hotspots = []
+
+    # Iterate through each type of crime and time period
+
+    my_toc_list_mapped = {
+                    "Pocket Theft": 18, "Chain Theft": 3, "Bicycle Theft": 2, "Two-wheeler Theft": 24,
+                    "Four-wheeler Theft": 8, "Other Vehicle Theft": 17, "Vehicle Parts Theft": 25,
+                    "Other Theft": 16, "Commercial Robbery": 4, "Technical Robbery": 23,
+                    "Preparing to Robbery": 19, "Other Robbery": 15, "Daytime Burglary": 6,
+                    "Night Burglary": 13, "Culpable Homicide": 5, "Forcible Theft": 7,
+                    "Rape": 21, "Murder": 12, "Attempt to Murder": 0, "Betrayal": 1,
+                    "Riot": 22, "Injury": 10, "Molestation": 11, "Gambling": 9,
+                    "Prohibition": 20, "Other": 14
+                }
+    
+    time_period = {0: 2, 2: 4, 4: 6, 6: 8, 8: 10, 10: 12, 12: 14, 14: 16, 16: 18, 18: 20, 20: 22, 22: 24}
+
+    for crime, value in my_toc_list_mapped.items():
+        print(f"************* CRIME = {crime} *******************")
+                    
+        for start_time, end_time in time_period.items():
+            prediction_list = predict_hotspots(my_list[0], my_list[1], my_list[2], my_list[3], value, start_time, end_time)
+            predictions_list.append(prediction_list)
+
+    # Function to extract landmark information
+    #     def extract_landmark_info(landmark_data):
+    #         return {
+    #             'Landmark': landmark_data[0][0],
+    #             'Longitude': float(landmark_data[1][0]),
+    #             'Latitude': float(landmark_data[2][0]),
+    #             'Pincode': float(landmark_data[3][0])
+    #         }
+
+
+        # Extracting landmark information for each entry in the list
+    #         landmark_info_list = [extract_landmark_info(landmark) for landmark in predictions_list]
+
+        # Convert dictionaries to tuples before passing them to Counter
+    #     landmark_info_tuples = [tuple(landmark.items()) for landmark in landmark_info_list]
+
+        # Count occurrences of each unique combination
+    #     landmark_counter = Counter(landmark_info_tuples)
+
+    #     # Finding the most common combination
+    #     most_common_landmark = landmark_counter.most_common(1)[0][0]
+
+    #     # Convert the most common combination back to dictionary form
+    #     most_common_landmark_dict = dict(most_common_landmark)
+
+    #     print("Most Common Landmark:")
+    #     print("Landmark:", most_common_landmark_dict['Landmark'])
+    #     print("Longitude:", most_common_landmark_dict['Longitude'])
+    #     print("Latitude:", most_common_landmark_dict['Latitude'])
+    #     print("Pincode:", most_common_landmark_dict['Pincode'])
+    #     print("Count:", landmark_counter[most_common_landmark])
+
+    #     all_hotspots_dic = {
+    #         'Landmark': most_common_landmark_dict['Landmark'],
+    #         'Longitude': most_common_landmark_dict['Longitude'],
+    #         'Latitude': most_common_landmark_dict['Latitude'],
+    #         'Pincode': most_common_landmark_dict['Pincode'],
+    # #         'Crime': crime
+    #     }
+
+        
+            data_dict = {
+                'Landmark': prediction_list[0][0],
+                'Longitude': prediction_list[1][0],
+                'Latitude': prediction_list[2][0],
+                'Pincode': prediction_list[3][0],
+            }
+
+            print(data_dict)
+
+        all_hotspots.append(data_dict)
+        
+        
+        
+
+    # Remove duplicate entries from all_hotspots
+    unique_hotspots = [dict(t) for t in {tuple(d.items()) for d in all_hotspots}]
+
+    print("All Hotspots:", unique_hotspots)
+
+    request.session['all_hotspots'] = unique_hotspots
+    response_data['msg'] = "Your Task Completed. Please Check The Results"
+    
+    # print(response_data)
+    speak("Your Task Completed. Please Check the Results")
+    return render(request, "index.html/",response_data)
 
 def predicthotspots_of_date(request):
+    # Example usage:
+    
+    def train_models():
+        # Connect to MongoDB
+        client = pymongo.MongoClient("mongodb+srv://vedant:vedant@cluster0.3glbf3u.mongodb.net/?retryWrites=true&w=majority")
+
+        print("Training started")
+
+        # Retrieve data from MongoDB
+        db = client.Crime
+        collection = db.CrimeDetails
+        cursor = collection.find()
+
+        data = list(cursor)
+
+        # Convert MongoDB cursor to Pandas DataFrame
+        columns_to_select = ['Type_of_Crime', 'Pincode', 'Landmark', 'Date_of_Crime', 'Time_Period_of_Crime', 'Latitude', 'Longitude']
+        df = pd.DataFrame(data, columns=columns_to_select)
+
+        # Handle missing values
+        df.replace(['', 'Select', 'SELECT', None], np.nan, inplace=True)
+        imputer = SimpleImputer(strategy='mean')
+        df[['Latitude', 'Longitude', 'Pincode']] = imputer.fit_transform(df[['Latitude', 'Longitude', 'Pincode']])
+        df[['Pincode']] = df[['Pincode']].astype(int)
+
+        # Convert date and time columns to datetime objects
+        df['Date_of_Crime'] = pd.to_datetime(df['Date_of_Crime'])
+        df['Day_of_Week'] = df['Date_of_Crime'].dt.dayofweek
+        df['Year'] = df['Date_of_Crime'].dt.year
+        df['Month'] = df['Date_of_Crime'].dt.month
+        df['Week'] = df['Date_of_Crime'].dt.isocalendar().week
+        df[['Crime_Start_Time', 'Crime_End_Time']] = df['Time_Period_of_Crime'].str.split('-', expand=True)
+        df[['Crime_Start_Hour','x']] = df['Crime_Start_Time'].str.split(':', expand=True)
+        df[['Crime_End_Hour','y']] = df['Crime_End_Time'].str.split(':', expand=True)
+        df.drop(['Crime_Start_Time', 'Crime_End_Time','x','y','Time_Period_of_Crime','Date_of_Crime'], axis=1, inplace=True)
+
+        # Convert categorical variables to numerical using Label Encoding
+        label_encoder = LabelEncoder()
+        df['Type_of_Crime'] = label_encoder.fit_transform(df['Type_of_Crime'])
+        df['Landmark'] = label_encoder.fit_transform(df['Landmark'])
+
+        # Handle missing values for Type_of_Crime and Landmark
+        imputer = SimpleImputer(strategy='mean')
+        df[['Type_of_Crime', 'Landmark']] = imputer.fit_transform(df[['Type_of_Crime', 'Landmark']])
+        df[['Landmark','Type_of_Crime']] = df[['Landmark','Type_of_Crime']].astype(int)
+
+        print("Training completed")
+        return label_encoder
+
+
+    def predict_hotspots_bydate(day_of_week, week, month, year, toc, csh, ceh, label_encoder):
+        print("Prediction Started")
+        # loaded_model_longitude = joblib.load('model_longitude.pkl')
+        # loaded_model_latitude = joblib.load('model_latitude.pkl')
+        # loaded_model_pincode = joblib.load('model_pincode.pkl')
+        # loaded_model_landmark = joblib.load('model_landmark.pkl')
+
+        
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+        static_dir = os.path.join(BASE_DIR, 'main', 'static', 'assets', 'Crime_Analysis_ML')
+
+        model_longitude_path = os.path.join(static_dir, 'model_longitude.pkl')
+        model_latitude_path = os.path.join(static_dir, 'model_latitude.pkl')
+        model_pincode_path = os.path.join(static_dir, 'model_pincode.pkl')
+        model_landmark_path = os.path.join(static_dir, 'model_landmark.pkl')
+
+        loaded_model_longitude = joblib.load(model_longitude_path)
+        loaded_model_latitude = joblib.load(model_latitude_path)
+        loaded_model_pincode = joblib.load(model_pincode_path)
+        loaded_model_landmark = joblib.load(model_landmark_path)
+
+        custom_data = {
+            'Day_of_Week': [day_of_week],
+            'Week': [week],
+            'Month': [month],
+            'Year': [year],
+            'Type_of_Crime': [toc],
+            'Crime_Start_Hour': [csh],
+            'Crime_End_Hour': [ceh]
+        }
+
+        custom_df = pd.DataFrame(custom_data)
+
+        predictions_longitude = loaded_model_longitude.predict(custom_df)
+        predictions_latitude = loaded_model_latitude.predict(custom_df)
+        predictions_pincode = loaded_model_pincode.predict(custom_df)
+        predictions_landmark_encoded = loaded_model_landmark.predict(custom_df)
+        predictions_landmark = label_encoder.inverse_transform(predictions_landmark_encoded.astype(int))
+
+        print("Prediction Completed")
+        return [predictions_landmark, predictions_longitude, predictions_latitude, predictions_pincode, csh, ceh]
+
     dic = {'err':None,'msg':None}
     if request.method == "POST":
         # try:
@@ -841,7 +810,8 @@ def predicthotspots_of_date(request):
             print('Date:', mydate)
 
             # Get tomorrow's date components
-            mylist = getTomorrowData(mydate)  
+            # mylist = getTomorrowData(mydate) 
+            mylist = get_tomorrow_data(mydate) 
             print(crimetype)      
             print(mylist)
 
@@ -861,7 +831,10 @@ def predicthotspots_of_date(request):
             print(ctype)
             print(s,e)
 
-            predictionlist = predictHotspots(request, mylist[0], mylist[1], mylist[2], mylist[3], ctype, s, e)
+            labelenc = train_models()
+            predictionlist = predict_hotspots_bydate(mylist[0], mylist[1], mylist[2], mylist[3], ctype, s, e,labelenc)
+            # print(predictionlist)   
+            # predictionlist = predictHotspots(request, mylist[0], mylist[1], mylist[2], mylist[3], ctype, s, e)
                     
             print("prediction result: \n")
             print(predictionlist)
@@ -873,7 +846,7 @@ def predicthotspots_of_date(request):
                 'landmark': predictionlist[0][0],  # Assuming only one location in the array
                 'latitude': predictionlist[1][0],
                 'longitude': predictionlist[2][0],
-                'pincode': predictionlist[3][0],
+                'pincode': int(predictionlist[3][0]),
                 'start_time': predictionlist[4],
                 'end_time': predictionlist[5],
                 'msg':'Successfully Predicted the Future Hotspot'
@@ -888,8 +861,9 @@ def predicthotspots_of_date(request):
     else:
         return render(request, "futurehotspots.html")
 
-            
+       
 
+@csrf_exempt
 def registerCrime(request):
     if 'user' in request.session:
         if request.method!="POST":
@@ -902,21 +876,6 @@ def registerCrime(request):
             stat={'err':None,'msg':None}
             data={}
 
-            # if request.POST.get('micforallbtn'):
-                
-                # data = readFromVoiceSeparate(request)
-
-                # stat['data'] = data              
-                
-                # print("\n\ndata = ",data)
-            # try:
-            # if request.POST.get('micforallbtn'):
-            #     print("exiting")
-            # else:               
-                # print("readDescriptionFromVoice: ")
-                # x=readDescriptionFromVoice(request)
-                # stat.update(x)
-
             print("readDescriptionFromVoice: ")
             x=readDescriptionFromVoice(request)
             stat.update(x)
@@ -924,21 +883,19 @@ def registerCrime(request):
             stat['msg'] = "Please double-check the results, as they may not be accurate every time. \nKeep in mind that predictions might vary."
             
             speak("Your Task Completed. Please Check the Results")
-                
-            # except Exception as ex:
-            #     print("exception: "+str(ex))
-            #     stat['err'] = "Opps! Something went wrong"
+
             return render(request, "RegisterCrime.html/",stat)
     else:
-        return render(request, "login.html/",{'err':'Please Login First...!'})
-
+        form = FormWithCaptcha()
+        return render(request, "login.html/",{'form':form,'err':'Please Login First...!'})
+@csrf_exempt
 def addcrime(request):
     dic={}
     if 'user' in request.session:
         print(request.session.get('user'))
     else:
-        return render(request, "login.html/",{'err':'Please Login First...!'})
-
+        form = FormWithCaptcha()
+        return render(request, "login.html/",{'form':form,'err':'Please Login First...!'})
     if request.method=="POST":
         # try:
             fname = request.POST.get("fname").upper()
@@ -999,34 +956,14 @@ def addcrime(request):
     return render(request, "RegisterCrime.html/",dic)
 
 def show(request):
-    # data_list = []
-    # context = {}
-    # obj = CrimeOperations()  # Instantiate once
+    
     if 'user' in request.session:
         print(request.session.get('user'))
     else:
-        return render(request, "login.html/",{'err':'Please Login First...!'})
+        form = FormWithCaptcha()
+        return render(request, "login.html/",{'form':form,'err':'Please Login First...!'})
 
-
-    # try:
-    #     stat1 = obj.crimedata_list()  # Assuming userdata_list returns a cursor
-    #     if stat1['err'] is None:
-    #         cursor = stat1['userdata']
-    #         for document in cursor:
-    #             data_dict = {
-    #                 'Username': document['Username'],
-    #                 'Email': document['Email'],
-    #                 'Password': document['Password'],
-    #                 'Status': document['Status'],
-    #                 # 'country': document['country'],
-    #                 # Add more key-value pairs as needed
-    #             }
-    #             data_list.append(data_dict)
-    #     else:
-    #         context['err'] = stat1['err']
-    # except Exception as err:
-    #     print("view catch: ", err)
-
+    
     # context['data_list'] = data_list
     return render(request, "ShowCrime.html/")
 
@@ -1034,13 +971,11 @@ def searchcrime(request):
     if 'user' in request.session:
         print(request.session.get('user'))
     else:
-        return render(request, "login.html/",{'err':'Please Login First...!'})
-
-    # speaking_thread = threading.Thread(target=speak, args=("WELCOME TO SEARCH CRIME WEB PAGE HERE YOU CAN SEARCH CRIMES",))
-    # speaking_thread.start()
-
+        form = FormWithCaptcha()
+        return render(request, "login.html/",{'form':form,'err':'Please Login First...!'})    
     return render(request, "SearchCrime.html/")
 
+@csrf_exempt
 def searchc(request):
     if request.method=="POST":
         key= int(request.POST.get("searchInput"))
@@ -1051,46 +986,63 @@ def searchc(request):
             return render(request, "SearchCrime.html/",stat)
 
     return render(request, "SearchResult.html/",stat)
- 
+
 def login(request):
-    dic = {'msg':None,'err':None}
+    dic = {'msg': None, 'err': None}
+
     if 'user' in request.session:
         del request.session['user']
         del request.session['new']
-        # request.session.flush()
 
-    if request.method == "POST":        
-        uname = request.POST.get("username")
-        pswd = request.POST.get("pass")
+    if request.method == "POST": 
+        form = FormWithCaptcha(request.POST)
+        if form.is_valid():
+            # Check reCAPTCHA
+            if form.cleaned_data.get('captcha'):
+                uname = request.POST.get("username")
+                pswd = request.POST.get("pass")
 
-        print(uname, pswd)
+                print(uname, pswd)
 
-        obj = UserOperations()
-        stat = obj.login(uname, pswd)
-        dic.update(stat)
+                obj = UserOperations()
+                stat = obj.login(uname, pswd)
+                dic.update(stat)
 
-        if dic['msg']:
-            # Redirect to 'index.html' after successful login
-            # dic['msg']="Login Successful"
-            print(dic)
-            request.session['user'] = uname
-            request.session['fname'] = dic['fname']
-            request.session['new'] = 1
-            print("Session Set..!")
-            return redirect('/index.html',dic)
-            # return render(request,'index.html/',dic)
-        elif dic['err']:
-            # dic['err']="Invalid Credentials"
-            return render(request, "login.html/",dic)
-    return render(request, "login.html/",dic)
+                if dic['msg']:
+                    # Redirect to 'index.html' after successful login
+                    dic['msg']="Login Successful"
+                    print(dic)
+                    request.session['user'] = uname
+                    request.session['fname'] = dic['fname']
+                    request.session['policestation'] = dic['policestation']
+                    request.session['new'] = 1
+                    print("Session Set..!")
+                    return redirect('/index.html',dic)
+                    # return render(request,'index.html/',dic)
+                elif dic['err']:
+                    dic['err']="Invalid Credentials"
+                    form = FormWithCaptcha()
+                    dic.update({'form':form})
+                    return render(request, "login.html/",dic)
+            else:
+                # reCAPTCHA verification failed
+                dic['err'] = "reCAPTCHA verification failed. Please try again."
+        else:
+            # Form validation failed
+            dic['err'] = "reCAPTCHA verification failed. Please try again..."
+    else:
+        form = FormWithCaptcha()
 
+    return render(request, "login.html/", {'form': form, 'msg': dic['msg'], 'err': dic['err']})
+
+@csrf_exempt
 def register(request):
     dic={}
     if 'user' in request.session:
         print(request.session.get('user'))
     else:
-        return render(request, "login.html/",{'err':'Please Login First...!'})
-
+        form = FormWithCaptcha()
+        return render(request, "login.html/",{'form':form,'err':'Please Login First...!'})
     if request.method=="POST":
         try:
             fname = request.POST.get("fname")
@@ -1098,10 +1050,12 @@ def register(request):
             uname = request.POST.get("uname")
             email = request.POST.get("email")
             pswd = request.POST.get("password")
+            ps = request.POST.get("Police_Station")
+            print("Police Station : ",ps)
             
             obj=UserOperations()
             
-            stat=obj.register(fname,lname,uname,email,pswd)
+            stat=obj.register(fname,lname,uname,email,pswd,ps)
             dic=stat
         
         except Exception as err: 
@@ -1109,14 +1063,15 @@ def register(request):
             print("Error"+str(err))
     return render(request, "register.html/",dic)
 
+@csrf_exempt
 def updateuser(request):
             
     stat={}
     if 'user' in request.session:
         print(request.session.get('user'))
     else:
-        return render(request, "login.html/",{'err':'Please Login First...!'})
-
+        form = FormWithCaptcha()
+        return render(request, "login.html/",{'form':form,'err':'Please Login First...!'})
     uname = request.GET['uname']
     stat['uname'] = uname
     obj = UserOperations()
@@ -1126,22 +1081,24 @@ def updateuser(request):
     if request.method == "POST":
         obj = UserOperations()
         print(request.POST)
-        s = obj.updateUserData(request.POST.get('uname'),request.POST.get('email'),request.POST.get('password'))
+        s = obj.updateUserData(request.POST.get('uname'),request.POST.get('email'),request.POST.get('password'),request.POST.get('Police_Station'))
         stat.update(s)
         if stat['msg']:
             query_params = f"msg={stat['msg']}"
+            request.session['policestation'] = request.POST.get('Police_Station')
             return redirect(f"/viewuser.html/?{query_params}")
         
     return render(request, "updateuser.html/", stat)
 
+@csrf_exempt
 def viewusers(request):
     data_list = []
     
     if 'user' in request.session:
         print(request.session.get('user'))
     else:
-        return render(request, "login.html/",{'err':'Please Login First...!'})
-
+        form = FormWithCaptcha()
+        return render(request, "login.html/",{'form':form,'err':'Please Login First...!'})
     context = request.GET.dict()
     print(context)
     obj = UserOperations()  # Instantiate once
@@ -1212,13 +1169,14 @@ def viewusers(request):
     print(context)
     return render(request, "viewuser.html", context)
 
+@csrf_exempt
 def chartjs(request):
     data = {}
     if 'user' in request.session:
         print(request.session.get('user'))
     else:
-        return render(request, "login.html/",{'err':'Please Login First...!'})
-
+        form = FormWithCaptcha()
+        return render(request, "login.html/",{'form':form,'err':'Please Login First...!'})
     if request.method == "POST":
         clicked_button = request.POST.get('special_btn', '')
 
@@ -1242,197 +1200,13 @@ def ViewCharts(request):
     if 'user' in request.session:
         print(request.session.get('user'))
     else:
-        return render(request, "login.html/",{'err':'Please Login First...!'})
-
+        form = FormWithCaptcha()
+        return render(request, "login.html/",{'form':form,'err':'Please Login First...!'})
     return render(request, "ViewCharts.html/")
 
-# def viewcriminals(request):
-#     context = {'criminals_data': []}
-#     if 'user' in request.session:
-#         print(request.session.get('user'))
-#     else:
-#         return render(request, "login.html/",{'err':'Please Login First...!'})
-
-#     if request.method == "GET":
-#         try:
-#             msg = request.GET.get('msg', None)
-            
-#             obj = CrimeOperations()
-#             response_data = obj.criminals_list()
-
-#             # Check if the response_data has 'err' and 'criminals_list' keys
-#             if isinstance(response_data, dict) and 'err' in response_data and 'criminals_list' in response_data:
-#                 err = response_data['err']
-#                 criminals_list = response_data['criminals_list']
-
-#                 if err is None and isinstance(criminals_list, list):
-#                     criminals_data = {}
-
-#                     for criminal in criminals_list:
-#                         first_name = criminal.get('First_Name', '')
-#                         last_name = criminal.get('Last_Name', '')
-#                         crime_type = criminal.get('Type_of_Crime', '')
-#                         firno = criminal.get('FIR_No', '')
-
-#                         # Create a unique key for each criminal based on First_Name and Last_Name
-#                         key = f"{first_name} {last_name}"
-
-#                         if first_name != None and last_name != None and first_name != '' and last_name != '':
-
-#                             # If the key already exists, append the crime type, otherwise create a new entry
-#                             if key in criminals_data:
-#                                 if crime_type not in criminals_data[key]['crime_types']:
-#                                     criminals_data[key]['crime_types'].append(crime_type)
-#                             else:
-#                                 criminals_data[key] = {
-#                                     'first_name': first_name,
-#                                     'last_name': last_name,
-#                                     'crime_types': [crime_type],
-#                                     'firno':firno,
-#                                 }
-                        
-                        
-#                     context['msg'] = msg
-#                     context['criminals_data'] = list(criminals_data.values())
-#                 else:
-#                     # Handle the case where there is an error in the response
-#                     context['error'] = 'Error in response data'
-
-#         except Exception as err:
-#             print("view catch: of criminal list ", err)
-#             context['error'] = 'An error occurred while fetching criminals list'
-#     # Render the template with the provided context
-#     return render(request, "viewcriminal.html", context)
-
-# def viewcriminals(request):
-#     context = {'criminals_data': []}
-#     if 'user' in request.session:
-#         print(request.session.get('user'))
-#     else:
-#         return render(request, "login.html/",{'err':'Please Login First...!'})
-
-#     if request.method == "GET":
-#         try:
-#             msg = request.GET.get('msg', None)
-            
-#             obj = CrimeOperations()
-#             response_data = obj.criminals_list()
-
-#             if isinstance(response_data, dict) and 'err' in response_data and 'criminals_list' in response_data:
-#                 err = response_data['err']
-#                 criminals_list = response_data['criminals_list']
-
-#                 if err is None and isinstance(criminals_list, list):
-#                     criminals_data = {}
-
-#                     for criminal in criminals_list:
-#                         first_name = criminal.get('First_Name', '')
-#                         last_name = criminal.get('Last_Name', '')
-#                         crime_type = criminal.get('Type_of_Crime', '')
-#                         firno = criminal.get('FIR_No', '')
-
-#                         key = f"{first_name} {last_name}"
-
-#                         if first_name and last_name:
-#                             if key in criminals_data:
-#                                 if crime_type not in criminals_data[key]['crime_types']:
-#                                     criminals_data[key]['crime_types'].append(crime_type)
-#                             else:
-#                                 criminals_data[key] = {
-#                                     'first_name': first_name,
-#                                     'last_name': last_name,
-#                                     'crime_types': [crime_type],
-#                                     'firno': firno,
-#                                 }
-                        
-#                     context['msg'] = msg
-#                     context['criminals_data'] = list(criminals_data.values())
-#                 else:
-#                     context['error'] = 'Error in response data'
-
-#                 if isinstance(response_data, dict) and 'err' in response_data:
-#                     err = response_data['err']
-
-#                 if err is None:
-#                     criminals_list = response_data.get('criminals_list', [])
-#                     paginator = Paginator(criminals_list, 150)
-#                     page_number = request.GET.get('page')
-#                     page_obj = paginator.get_page(page_number)
-
-#                     context['page_obj'] = page_obj
-#                     context['msg'] = msg
-#                 else:
-#                     context['error'] = 'Error in response data'
-#         except Exception as err:
-#             print("An error occurred while fetching criminals list:", err)
-#             context['error'] = 'An error occurred while fetching criminals list'
-
-#     return render(request, "viewcriminal.html", context)
-
-# def viewcriminals(request):
-#     context = {'criminals_data': []}
-#     if 'user' in request.session:
-#         print(request.session.get('user'))
-#     else:
-#         return render(request, "login.html/",{'err':'Please Login First...!'})
-
-#     if request.method == "GET":
-#         try:
-#             msg = request.GET.get('msg', None)
-            
-#             obj = CrimeOperations()
-#             response_data = obj.criminals_list()
-
-#             if isinstance(response_data, dict) and 'err' in response_data and 'criminals_list' in response_data:
-#                 err = response_data['err']
-#                 criminals_list = response_data['criminals_list']
-
-#                 if err is None and isinstance(criminals_list, list):
-#                     criminals_data = {}
-
-#                     for criminal in criminals_list:
-#                         first_name = criminal.get('First_Name', '')
-#                         last_name = criminal.get('Last_Name', '')
-#                         crime_type = criminal.get('Type_of_Crime', '')
-#                         firno = criminal.get('FIR_No', '')
-
-#                         key = f"{first_name} {last_name}"
-
-#                         if first_name and last_name:
-#                             if key in criminals_data:
-#                                 if crime_type not in criminals_data[key]['crime_types']:
-#                                     criminals_data[key]['crime_types'].append(crime_type)
-#                             else:
-#                                 criminals_data[key] = {
-#                                     'first_name': first_name,
-#                                     'last_name': last_name,
-#                                     'crime_types': [crime_type],
-#                                     'firno': firno,
-#                                 }
-                        
-#                     context['msg'] = msg
-#                     context['criminals_data'] = list(criminals_data.values())
-#                 else:
-#                     context['error'] = 'Error in response data'
-
-#                 if isinstance(response_data, dict) and 'err' in response_data:
-#                     err = response_data['err']
-
-#                 if err is None:
-#                     criminals_list = [criminal for criminal in criminals_data.values()]
-#                     paginator = Paginator(criminals_list, 50)
-#                     page_number = request.GET.get('page')
-#                     page_obj = paginator.get_page(page_number)
-
-#                     context['page_obj'] = page_obj
-#                     context['msg'] = msg
-#         except Exception as err:
-#                 print("An error occurred while fetching criminals list:", err)
-#                 context['error'] = 'An error occurred while fetching criminals list'
-
-#         return render(request, "viewcriminal.html", context)
-
+@csrf_exempt
 def viewcriminals(request):
+
     context = {'criminals_data': []}
     if 'user' in request.session:
         print(request.session.get('user'))
@@ -1442,13 +1216,30 @@ def viewcriminals(request):
     if request.method == "GET":
         try:
             msg = request.GET.get('msg', None)
+            unique_police_stations = []
+
+
+            policestation = request.session.get('policestation')
 
             obj = CrimeOperations()
-            response_data = obj.criminals_list()
+            # response_data = obj.criminals_list()
+            response_data = obj.criminals_list_as_per_police_station(policestation)
+            print("res = ",response_data)
+
+            # station = obj.getpolicestation()
+            # print("-===================================================================================")
 
             if isinstance(response_data, dict) and 'err' in response_data and 'criminals_list' in response_data:
                 err = response_data['err']
                 criminals_list = response_data['criminals_list']
+
+                # if err is None and isinstance(policestation, list):
+                #         print("1")
+                #         for criminal in station:
+                #             policest= criminal.get('Police_Station', '')
+                #             if ps not in unique_police_stations:
+                #                 unique_police_stations.append(policest)
+                                
 
                 if err is None and isinstance(criminals_list, list):
                     criminals_data = {}
@@ -1461,6 +1252,7 @@ def viewcriminals(request):
                         crime_type = criminal.get('Type_of_Crime', '')
                         firno = criminal.get('FIR_No', '')
                         ps = criminal.get('Police_Station', '')
+                        # ps = station
 
                         key = f"{first_name} {last_name}"
 
@@ -1476,13 +1268,12 @@ def viewcriminals(request):
                                     'firno': firno,
                                     'police_station': ps,
                                 }
-                            if ps not in unique_police_stations:
-                                unique_police_stations.append(ps)
+                            
 
                     print(unique_police_stations)
                     context['msg'] = msg
                     context['criminals_data'] = list(criminals_data.values())
-                    context['police_stations'] = unique_police_stations
+                    # context['police_stations'] = unique_police_stations
                 else:
                     context['error'] = 'Error in response data'
 
@@ -1503,12 +1294,14 @@ def viewcriminals(request):
 
     return render(request, "viewcriminal.html", context)
 
+
+@csrf_exempt
 def criminaldetail(request):
     if 'user' in request.session:
         print(request.session.get('user'))
     else:
-        return render(request, "login.html/",{'err':'Please Login First...!'})
-
+        form = FormWithCaptcha()
+        return render(request, "login.html/",{'form':form,'err':'Please Login First...!'})
     context = {}
     if request.method == "POST":
         for key in request.POST:
@@ -1533,13 +1326,14 @@ def criminaldetail(request):
         
         return render(request, "criminaldetail.html",context)
 
+@csrf_exempt
 def updatecrime(request,parameter=''):
     context = {'criminals_data': []}
     if 'user' in request.session:
         print(request.session.get('user'))
     else:
-        return render(request, "login.html/",{'err':'Please Login First...!'})
-
+        form = FormWithCaptcha()
+        return render(request, "login.html/",{'form':form,'err':'Please Login First...!'})
     if request.method == "GET":
         try:
             obj = CrimeOperations()
@@ -1589,6 +1383,7 @@ def updatecrime(request,parameter=''):
     # Render the template with the provided context
     return render(request, "UpdateCrime.html", context)
 
+@csrf_exempt
 def showcrimedata(request):
     context = {}
     if request.method == "POST":
@@ -1617,36 +1412,7 @@ def showcrimedata(request):
 
     return render(request, "updatecriminaldata.html", context)
     
-# def displaycrime(request,param1=0):
-#     if request.method == "GET":
-#         try:
-#             print("In the get method")
-            
-#             if param1 == 0:
-#                 param1 = request.GET.get('param1')
-
-#             print(param1)
-#             msg = request.GET.get('msg', None)
-#             fir_no = param1
-#             fn = fir_no
-#             # For example, printing the parameter
-#             print(f"FIR_No from query parameters: {fn}")
-
-
-#             obj = CrimeOperations()
-#             data = obj.searchfirno(fn)
-
-#             if data['err']:
-#                 return render(request, "displaycrime.html", {'err_message': data['err']})
-            
-#             data['msg'] = msg
-#             print("data = ",data)
-#         except Exception as err:
-#                 print("view catch: displaycrime ", err)
-
-#     return render(request, "SearchResult.html", data)
-
-
+@csrf_exempt
 def displaycrime(request,param1=0):
     if request.method == "GET":
         try:
@@ -1677,6 +1443,7 @@ def displaycrime(request,param1=0):
 
     return render(request, "SearchResult.html", data)
 
+@csrf_exempt
 def showupdate_combined(request):
         
         if request.method == "POST":
@@ -1723,112 +1490,7 @@ def showupdate_combined(request):
               print("view catch: show criminal list ", err)
         return render(request,"UpdateCrime.html/")
 
-# def showupdate(request, param1, param2, param3):
-#     context = {'data': []}
-
-#     if 'user' in request.session:
-#         print(request.session.get('user'))
-#     else:
-#         return render(request, "login.html/", {'err': 'Please Login First...!'})
-
-#     if request.method == "GET":
-#         try:
-#             fn = param1
-#             ln = param2
-#             ct = param3
-
-#             obj = CrimeOperations()
-#             data = obj.crimesearch(fn, ln, ct)
-
-#             if data.get('err'):
-#                 return render(request, "showupdatecrime.html", {'err_message': data['err']})
-
-#             for document in data.get('data', []):
-#                 context['data'].append({
-#                    'first_name': document.get("First_Name", ''),
-#                             'last_name': document.get("Last_Name", ''),
-#                             'age': document.get('Age', ''),
-#                             'date_of_birth': document.get('Date-of-Birth', ''),
-#                             'aadhar_no': document.get('Aadhar_No', ''),
-#                             'gender': document.get('Gender', ''),
-#                             'phone_no': document.get('Phone_No', ''),
-#                             'height': document.get('Height', ''),
-#                             'address': document.get('Address', ''),
-#                             'fir_no': document.get('FIR_No', ''),
-#                             'crime_types': document.get("Type_of_Crime", ''),
-#                             'number_of_person_involved': document.get('Number_Of_Person_Involve', ''),
-#                             'weapons_used': document.get('Weapons_use_for_Crime', ''),
-#                             'date_of_crime': document.get('Date_of_Crime', ''),
-#                             'time_period_of_crime': document.get('Time_Period_of_Crime', ''),
-#                             'vehicle_use': document.get('Vehicle_use', ''),
-#                             'vehicle_no': document.get('Vehicle_No', ''),
-#                             'no_of_person_on_vehicle': document.get('No_of_Person_on_Vehicle', ''),
-#                             'description_of_person_sitting_on_vehicle': document.get('Discription_of_Person_sitting_on_Vehicle', ''),
-#                             'description_of_vehicle': document.get('Discription_of_Vehicle', ''),
-#                             'crime_spot': document.get('Crime_Spot', ''),
-#                             'pincode': document.get('Pincode', ''),
-#                             'description_of_crime_spot': document.get('Discription_of_Crime_Spot', ''),
-#                             'status': document.get('Status', ''),
-#                             'landmark': document.get('Landmark', ''),
-#                 })
-                
-#         except Exception as err:
-#             print("view:showupdate ", err)
-
-#     return render(request, "showupdatecrime.html", context)
-
-# def showupdate(request, param1, param2, param3):
-#     context = {'data': []}
-
-#     if 'user' in request.session:
-#         print(request.session.get('user'))
-#     else:
-#         return render(request, "login.html/", {'err': 'Please Login First...!'})
-
-#     if request.method == "GET":
-#         try:
-#             fn = param1
-#             ln = param2
-#             ct = param3
-
-#             obj = CrimeOperations()
-#             data = obj.crimesearch(fn, ln, ct)
-#             print("Length of data:", len(data.get('data', [])))
-
-#             print("data : ",data)
-
-#             if data.get('err'):
-#                 return render(request, "showupdatecrime.html", {'err_message': data['err']})
-
-#             for document in data.get('data', []):
-#                 context['data'].append({
-#                    'first_name': document.get("First_Name", ''),
-#                             'last_name': document.get("Last_Name", ''),
-#                             'fir_no': document.get('FIR_No', ''),
-#                             'crime_types': document.get("Type_of_Crime", ''),
-#                             'number_of_person_involved': document.get('Number_Of_Person_Involve', ''),
-#                             'weapons_used': document.get('Weapons_use_for_Crime', ''),
-#                             'date_of_crime': document.get('Date_of_Crime', ''),
-#                             'time_period_of_crime': document.get('Time_Period_of_Crime', ''),
-#                             'vehicle_use': document.get('Vehicle_use', ''),
-#                             'vehicle_no': document.get('Vehicle_No', ''),
-#                             'no_of_person_on_vehicle': document.get('No_of_Person_on_Vehicle', ''),
-#                             'description_of_person_sitting_on_vehicle': document.get('Discription_of_Person_sitting_on_Vehicle', ''),
-#                             'description_of_vehicle': document.get('Discription_of_Vehicle', ''),
-#                             'crime_spot': document.get('Crime_Spot', ''),
-#                             'pincode': document.get('Pincode', ''),
-#                             'description_of_crime_spot': document.get('Discription_of_Crime_Spot', ''),
-#                             'status': document.get('Status', ''),
-#                             'landmark': document.get('Landmark', ''),
-#                 })
-
-#                 print("document : ",context['data'])
-                
-#         except Exception as err:
-#             print("view:showupdate ", err)
-
-#     return render(request, "showupdatecrime.html", context)
-
+@csrf_exempt
 def showupdate(request, param1, param2, param3):
     context = {'data': []}
 
@@ -1845,6 +1507,7 @@ def showupdate(request, param1, param2, param3):
 
             obj = CrimeOperations()
             data = obj.crimesearch(fn, ln, ct)
+            print(fn,ln,ct)
 
             print("data : ", data)
 
@@ -1885,7 +1548,8 @@ def showupdate(request, param1, param2, param3):
             print("view:showupdate ", err)
 
     return render(request, "showupdatecrime.html", context)
-   
+
+@csrf_exempt
 def deletecrimedata(request):
     if 'user' in request.session:
         print(request.session.get('user'))
@@ -1948,6 +1612,7 @@ def searchchart(request):
 
     return render(request,"searchchart.html/")
  
+@csrf_exempt
 def searchchartresult(request):
     if request.method == "GET":
         # search_term = request.GET.get('search_term', '')
@@ -1990,6 +1655,7 @@ def searchchartresult(request):
 
 from bson import ObjectId
 
+@csrf_exempt
 def searchcrimeresult(request):
     if request.method == "GET":
         # search_term = request.GET.get('search_term', '')
@@ -2024,7 +1690,7 @@ def searchcrimeresult(request):
     else:
         return render(request, "SearchCrime.html/")
 
-
+@csrf_exempt
 def statuschangedata(request):
     data = {}
     if 'user' in request.session:
@@ -2058,42 +1724,95 @@ def statuschangedata(request):
 def futurehotspots(request):
     return render(request,"futurehotspots.html/")
 
+def get_police_station(request):
+    context = {'criminals_data': []}
+    print("In the get police station")
+    
+    # Check if user is authenticated
+    if 'user' not in request.session:
+        return render(request, "login.html/", {'err': 'Please Login First...!'})
+    
+    # Check if request method is GET
+    if request.method == 'GET':
+        try:
+            selected_station = request.GET.get('station')
+            print("Selected Police Station:", selected_station)
+            
+            # Ensure a police station is selected
+            if selected_station:
+                obj = CrimeOperations()
+                if selected_station == 'all':
+                    response_data = obj.criminals_list()
+                else:
+                    response_data = obj.criminals_list_as_per_police_station(selected_station)
+                # station = obj.getpolicestation()
 
+                criminals_data = {}
+                # unique_police_stations = []
+
+                if isinstance(response_data, dict) and 'err' in response_data and 'criminals_list' in response_data:
+                    err = response_data['err']
+                    criminals_list = response_data['criminals_list']
+                    # policestation = station['criminals_list']
+
+                    # if err is None and isinstance(policestation, list):
+                    #     print("1")
+                    #     for criminal in policestation:
+                    #         ps = criminal.get('Police_Station', '')
+                    #         if ps not in unique_police_stations:
+                    #             unique_police_stations.append(ps)
+
+                    if err is None and isinstance(criminals_list, list):
+                        print("2")
+                        for criminal in criminals_list:
+                            first_name = criminal.get('First_Name', '')
+                            last_name = criminal.get('Last_Name', '')
+                            crime_type = criminal.get('Type_of_Crime', '')
+                            ps = criminal.get('Police_Station', '')
+
+                            key = f"{first_name} {last_name}"
+                            if first_name and last_name:
+                                if key in criminals_data:
+                                    if crime_type not in criminals_data[key]['crime_types']:
+                                        criminals_data[key]['crime_types'].append(crime_type)
+                                else:
+                                    criminals_data[key] = {
+                                        'first_name': first_name,
+                                        'last_name': last_name,
+                                        'crime_types': [crime_type],
+                                        'selected_station': selected_station,
+                                        'police_station':ps
+                                    }
+
+                        context['msg'] = request.GET.get('msg')
+                        context['criminals_data'] = list(criminals_data.values())
+                        # context['police_stations'] = unique_police_stations
+
+                        # Pagination
+                        paginator = Paginator(context['criminals_data'], 150)
+                        page_number = request.GET.get('page')
+                        page_obj = paginator.get_page(page_number)
+                        context['page_obj'] = page_obj
+
+                        print("4")
+                        print(context)
+                        return render(request, 'viewcriminal.html', context)
+                    else:
+                        context['error'] = 'An error occurred while fetching criminals list'
+                else:
+                    context['error'] = 'An error occurred while fetching criminals list'
+            else:
+                context['error'] = 'No station selected'
+        except Exception as e:
+            print("An error occurred:", e)
+            context['error'] = 'An error occurred while processing the request'
+    else:
+        context['error'] = 'Invalid request method'
+    print("3")
+    print(context)
+    return render(request, 'viewcriminal.html', context)
 
 def sampleurl(request):
-    # crime_data = pd.read_csv('datafile (1).csv')
-    # X = crime_data[['Latitude', 'Longitude']].values
-    # y = crime_data['Pincode'].values
-
-    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # scaler = StandardScaler()
-    # X_train_scaled = scaler.fit_transform(X_train)
-    # X_test_scaled = scaler.transform(X_test)
-
-    # # Build the neural network model
-    # model = Sequential([
-    #     Dense(64, activation='relu', input_shape=(2,)),
-    #     Dense(32, activation='relu'),
-    #     Dense(1, activation='linear')  # Assuming pincode prediction is a regression task
-    # ])
-
-    # # Compile the model
-    # model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
-
-    # # Train the model
-    # model.fit(X_train_scaled, y_train, epochs=10, batch_size=32, validation_split=0.2)
-
-    # # Evaluate the model
-    # loss, mae = model.evaluate(X_test_scaled, y_test)
-
-    # print(f'Test Mean Absolute Error: {mae}')
-
-    # # Make predictions
-    # predictions = model.predict(X_train)
-    # print(predictions)
-
-
     return render(request,"sampleurl.html/")
 
 
@@ -2174,93 +1893,4 @@ def sampleurl(request):
 #         return JsonResponse({'results': results})
 #     else:
 #         return render(request, "searchchart.html/")
-
-
-from django.template.loader import render_to_string
-
-def get_police_station(request):
-    context = {'criminals_data': []}
-    print("In the get police station")
-    
-    if 'user' not in request.session:
-        return render(request, "login.html/", {'err': 'Please Login First...!'})
-    
-    if request.method == 'GET':
-        try:
-            selected_station = request.GET.get('station')
-            # selected_station = station
-            print("Selected Police Station : ",selected_station)
-            
-            if selected_station:
-                obj = CrimeOperations()
-                response_data = obj.criminals_list_as_per_police_station(selected_station)
-                station = obj.getpolicestation()
-
-
-                print("in the if")
-                criminals_data = {}
-                unique_police_stations = []
-                
-                if isinstance(response_data, dict) and 'err' in response_data and 'criminals_list' in response_data:
-                    err = response_data['err']
-                    criminals_list = response_data['criminals_list']
-                    policestation = station['criminals_list']
-
-                    
-
-                    if err is None and isinstance(policestation, list):
-                        
-                        for criminal in policestation:
-                            ps = criminal.get('Police_Station', '')
-                            if ps not in unique_police_stations:
-                                unique_police_stations.append(ps)
-
-                        
-
-                    
-                    if err is None and isinstance(criminals_list, list):
-                        
-                        for criminal in criminals_list:
-                            first_name = criminal.get('First_Name', '')
-                            last_name = criminal.get('Last_Name', '')
-                            crime_type = criminal.get('Type_of_Crime', '')
-
-                            key = f"{first_name} {last_name}"
-                            if first_name and last_name:
-                                if key in criminals_data:
-                                    if crime_type not in criminals_data[key]['crime_types']:
-                                        criminals_data[key]['crime_types'].append(crime_type)
-                                else:
-                                    criminals_data[key] = {
-                                        'first_name': first_name,
-                                        'last_name': last_name,
-                                        'crime_types': [crime_type],
-                                        'selected_station' : unique_police_stations,
-                                    }
-
-                        context['msg'] = request.GET.get('msg')
-                        context['criminals_data'] = list(criminals_data.values())
-                        context['police_stations'] = unique_police_stations
-
-                        # Pagination
-                        paginator = Paginator(context['criminals_data'], 150)
-                        page_number = request.GET.get('page')
-                        page_obj = paginator.get_page(page_number)    
-                        context['page_obj'] = page_obj
-
-                        return render(request, 'viewcriminal.html', context)
-                    else:
-                        context['error'] = 'An error occurred while fetching criminals list'
-                else:
-                    context['error'] = 'An error occurred while fetching criminals list'
-            else:
-                context['error'] = 'No station selected'
-        except Exception as e:
-            print("An error occurred:", e)
-            context['error'] = 'An error occurred while processing the request'
-    else:
-        context['error'] = 'Invalid request method'
-    
-    return render(request, 'viewcriminal.html', context)
-
 
